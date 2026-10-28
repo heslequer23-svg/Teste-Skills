@@ -43,8 +43,7 @@
         <p class="hero__subtitle">Gerenciamento integrado de competidores, configuração dinâmica de regras por modalidade, exportação oficial e segurança de dados em tempo real.</p>
         <div class="hero-v4__actions">
           <button type="button" class="btn-v4 btn-v4--primary" id="admin-btn-novo">＋ Cadastrar aluno</button>
-          <button type="button" class="btn-v4 btn-v4--secondary" id="admin-hero-backup">💾 Baixar backup JSON</button>
-          <button type="button" class="btn-v4 btn-v4--secondary" id="admin-hero-export">📊 Exportar CSV</button>
+          <button type="button" class="btn-v4 btn-v4--secondary" id="admin-hero-pdf">📄 Relatório Oficial PDF</button>
         </div>
         <ul class="hero-v4__trust" aria-label="Destaques operacionais">
           <li><strong>3</strong><span>modalidades oficiais</span></li>
@@ -103,22 +102,62 @@
 
       <!-- ABA 1: GESTÃO DE ALUNOS -->
       <div id="admin-view-alunos">
-        <!-- FERRAMENTAS DE SEGURANÇA E DADOS (SEM REPETIÇÕES) -->
-        <section class="admin-tools">
-          <div class="admin-tools__info">
-            <span class="section-kicker" style="margin-bottom:6px;">SEGURANÇA DOS DADOS</span>
-            <h3>Cópia de Segurança &amp; Relatórios</h3>
-            <p>Faça cópias de segurança em JSON, restaure arquivos salvos, exporte o ranking para CSV ou reinicie os resultados das tentativas mantendo os alunos cadastrados.</p>
-          </div>
-          <div class="admin-tools__buttons">
-            <button type="button" class="btn btn--secondary" id="admin-backup">💾 Baixar backup JSON</button>
-            <label class="btn btn--secondary admin-file-label">📂 Restaurar backup<input type="file" id="admin-restore" accept="application/json,.json" hidden></label>
-            <label class="btn btn--secondary admin-file-label">📥 Importar alunos CSV<input type="file" id="admin-import-csv" accept=".csv,text/csv" hidden></label>
-            <button type="button" class="btn btn--secondary" id="admin-export-csv">📊 Exportar tabela geral CSV</button>
-            <button type="button" class="btn btn--secondary" id="admin-cloud-backup">☁️ Enviar backup para a nuvem</button>
-            <button type="button" class="btn btn--danger" id="admin-clear-results">⚠️ Limpar resultados</button>
-            <small id="admin-cloud-status" style="flex-basis:100%;opacity:.75;"></small>
-          </div>
+        <!-- CARDS ORGANIZADOS DE GESTÃO, BACKUP E RELATÓRIOS -->
+        <section class="admin-panels-grid">
+          <!-- CARD 1: RELATÓRIOS & EXPORTAÇÃO -->
+          <article class="admin-panel-card">
+            <div class="admin-panel-card__header">
+              <span class="admin-panel-card__icon">📄</span>
+              <div>
+                <span class="admin-panel-card__kicker">EMISSÃO &amp; RESULTADOS</span>
+                <h4>Relatórios Oficiais</h4>
+              </div>
+            </div>
+            <p class="admin-panel-card__desc">Documentos oficiais e tabelas completas prontas para impressão e visualização.</p>
+            <div class="admin-panel-card__actions">
+              <button type="button" class="btn btn--primary" id="admin-export-pdf" style="width:100%;">📄 Imprimir Relatório Oficial PDF</button>
+              <button type="button" class="btn btn--secondary" id="admin-export-csv" style="width:100%;">📊 Exportar Tabela Geral CSV</button>
+            </div>
+          </article>
+
+          <!-- CARD 2: BACKUP & SINCRONIZAÇÃO -->
+          <article class="admin-panel-card">
+            <div class="admin-panel-card__header">
+              <span class="admin-panel-card__icon">💾</span>
+              <div>
+                <span class="admin-panel-card__kicker">SEGURANÇA DOS DADOS</span>
+                <h4>Backup &amp; Sincronia</h4>
+              </div>
+            </div>
+            <p class="admin-panel-card__desc">Cópias completas de atletas e regras de circuito em arquivo JSON e na nuvem.</p>
+            <div class="admin-panel-card__actions">
+              <div style="display:flex;gap:8px;width:100%;">
+                <button type="button" class="btn btn--secondary" id="admin-backup" style="flex:1;">💾 Baixar JSON</button>
+                <label class="btn btn--secondary admin-file-label" style="flex:1;text-align:center;">📂 Restaurar<input type="file" id="admin-restore" accept="application/json,.json" hidden></label>
+              </div>
+              <button type="button" class="btn btn--secondary" id="admin-cloud-backup" style="width:100%;">☁️ Enviar Backup para Nuvem</button>
+              <div class="admin-cloud-indicator">
+                <span class="admin-cloud-dot"></span>
+                <small id="admin-cloud-status">Verificando status da nuvem...</small>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 3: GESTÃO & ZONA CRÍTICA -->
+          <article class="admin-panel-card admin-panel-card--danger">
+            <div class="admin-panel-card__header">
+              <span class="admin-panel-card__icon">⚙️</span>
+              <div>
+                <span class="admin-panel-card__kicker">CADASTRO &amp; MANUTENÇÃO</span>
+                <h4>Gestão da Base</h4>
+              </div>
+            </div>
+            <p class="admin-panel-card__desc">Importação em lote de competidores e redefinição de tempos de prova.</p>
+            <div class="admin-panel-card__actions">
+              <label class="btn btn--secondary admin-file-label" style="width:100%;text-align:center;">📥 Importar Alunos (CSV)<input type="file" id="admin-import-csv" accept=".csv,text/csv" hidden></label>
+              <button type="button" class="btn btn--danger" id="admin-clear-results" style="width:100%;margin-top:auto;">⚠️ Limpar Resultados da Pista</button>
+            </div>
+          </article>
         </section>
 
         <!-- FILTROS E BUSCA -->
@@ -168,24 +207,28 @@
         </div>
       </div>
 
-      <!-- ABA 2: CONFIGURAÇÃO DE CIRCUITOS (V4.16) -->
+      <!-- ABA 2: CONFIGURAÇÃO DE CIRCUITOS (MULTI-ESPORTES DINÂMICO) -->
       <section id="admin-view-circuitos" class="admin-circuit-view hidden">
         <div class="circuit-editor-header">
           <div>
-            <span class="eyebrow">Personalização de Regras</span>
-            <h3>Configuração Dinâmica das Modalidades</h3>
-            <p>Ajuste as estações, quantidades de tentativas e defina se cada habilidade é um Bônus (-X s) ou Penalidade (+X s).</p>
+            <span class="eyebrow">Personalização de Regras &amp; Modalidades</span>
+            <h3>Configuração Dinâmica dos Circuitos</h3>
+            <p>Gerencie esportes cadastrados, ajuste estações, bônus (-X s) ou penalidades (+X s) e faça cópias de segurança técnicas.</p>
           </div>
           <div class="circuit-editor-actions">
-            <button type="button" class="btn btn--secondary" id="circuit-btn-reset">↺ Restaurar Padrão Oficial</button>
+            <button type="button" class="btn btn--secondary" id="circuit-btn-new-sport">➕ Novo Esporte</button>
+            <button type="button" class="btn btn--secondary" id="circuit-btn-backup-sport" title="Baixar JSON das regras do esporte ativo">💾 Baixar Regras</button>
+            <label class="btn btn--secondary admin-file-label" title="Restaurar arquivo JSON de regras">📂 Restaurar Regras<input type="file" id="circuit-input-restore-sport" accept="application/json,.json" hidden></label>
+            <button type="button" class="btn btn--secondary" id="circuit-btn-reset">↺ Restaurar Padrões de Fábrica</button>
             <button type="button" class="btn btn--primary" id="circuit-btn-save">💾 Salvar Circuito</button>
           </div>
         </div>
 
-        <div class="circuit-sport-selector" id="circuit-sport-selector">
-          <button type="button" class="circuit-sport-btn active" data-sport="Basquete">🏀 Basquete</button>
-          <button type="button" class="circuit-sport-btn" data-sport="Futsal">⚽ Futsal</button>
-          <button type="button" class="circuit-sport-btn" data-sport="Vôlei">🏐 Vôlei</button>
+        <div class="circuit-sport-selector-wrapper">
+          <div class="circuit-sport-selector" id="circuit-sport-selector">
+            <!-- Abas de esportes renderizadas dinamicamente via JS -->
+          </div>
+          <button type="button" class="btn-circuit-del-sport" id="circuit-btn-del-sport" title="Excluir modalidade ativa">🗑️ Excluir Esporte</button>
         </div>
 
         <div class="circuit-editor-meta" id="circuit-editor-meta"></div>
@@ -246,6 +289,33 @@
         </select>
       </div>
       <button class="btn modal__submit" type="submit">Salvar dados</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE CADASTRO DE NOVO ESPORTE -->
+<div class="modal-overlay" id="circuit-modal-new-sport">
+  <div class="modal">
+    <button class="modal__close" id="circuit-modal-close-sport" aria-label="Fechar">✕</button>
+    <h2 class="modal__title">Cadastrar Novo Esporte</h2>
+    <form class="modal__form" id="circuit-form-new-sport">
+      <div class="form-group">
+        <label for="new-sport-name">Nome da Modalidade Esportiva</label>
+        <input id="new-sport-name" placeholder="Ex: Handebol, Atletismo, Natação..." required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="new-sport-emoji">Emoji / Ícone Representativo</label>
+        <input id="new-sport-emoji" placeholder="Ex: 🤾, 🏃, 🏊, 🏐, ⚡" maxlength="4" style="font-size:1.3rem;text-align:center;" required value="🤾">
+      </div>
+      <div class="form-group">
+        <label for="new-sport-template">Estrutura Inicial de Estações</label>
+        <select id="new-sport-template">
+          <option value="empty">Circuito em branco (adicionar estações do zero)</option>
+          <option value="copy_active">Copiar estações da modalidade selecionada</option>
+          <option value="standard">Padrão com 3 habilidades e 1 penalidade</option>
+        </select>
+      </div>
+      <button class="btn modal__submit" type="submit">Criar Modalidade</button>
     </form>
   </div>
 </div>

@@ -9,7 +9,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const PENALTY_UNIT = 2;
 
   const CIRCUITS_STORAGE_KEY = 'poliedroskills_circuitos';
-  const MODALIDADES_EMOJIS = { Basquete: '🏀', Futsal: '⚽', 'Vôlei': '🏐' };
+  const MODALIDADES_EMOJIS_KEY = 'poliedroskills_modalidades_emojis';
+  const DEFAULT_MODALIDADES_EMOJIS = { Basquete: '🏀', Futsal: '⚽', 'Vôlei': '🏐' };
+
+  function loadModalidadesEmojis() {
+    try {
+      const raw = localStorage.getItem(MODALIDADES_EMOJIS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') return { ...DEFAULT_MODALIDADES_EMOJIS, ...parsed };
+      }
+    } catch (_) {}
+    return { ...DEFAULT_MODALIDADES_EMOJIS };
+  }
+
+  let MODALIDADES_EMOJIS = loadModalidadesEmojis();
+
+  function saveModalidadesEmojis(emojis) {
+    MODALIDADES_EMOJIS = emojis;
+    try {
+      localStorage.setItem(MODALIDADES_EMOJIS_KEY, JSON.stringify(emojis));
+    } catch (_) {}
+  }
 
   const DEFAULT_CIRCUITOS = {
     Basquete: [
@@ -68,11 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function normalizeModalidade(input = '') {
-    const clean = String(input).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (!input) return null;
+    const trimmed = String(input).trim();
+    const clean = trimmed.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (clean === 'basquete' || clean === 'basketball' || clean === 'basquetebol' || clean === 'bask') return 'Basquete';
     if (clean === 'futsal' || clean === 'futebol' || clean === 'soccer' || clean === 'fut' || clean === 'futebol de salao') return 'Futsal';
     if (clean === 'volei' || clean === 'voleibol' || clean === 'volleyball' || clean === 'volei de quadra') return 'Vôlei';
-    return CIRCUITOS[input] ? input : null;
+
+    // Suporte dinâmico a modalidades customizadas cadastradas
+    if (CIRCUITOS && CIRCUITOS[trimmed]) return trimmed;
+    const match = Object.keys(CIRCUITOS || {}).find(m => m.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') === clean);
+    if (match) return match;
+
+    return null;
   }
 
   const CATEGORIAS_OFICIAIS = [
@@ -1023,8 +1052,55 @@ document.addEventListener('DOMContentLoaded', () => {
     try { if (!document.fullscreenElement) await document.documentElement.requestFullscreen(); else await document.exitFullscreen(); } catch (_) { }
   });
   $('telao-modalidade')?.addEventListener('change', renderTelao);
+  // Atualiza dinamicamente todos os seletores de modalidades com os esportes cadastrados
+  function updateAllSportSelects() {
+    const sportsList = Object.keys(CIRCUITOS || {});
+    if (!sportsList.length) return;
+
+    // 1. Selects com opção "Todas modalidades"
+    const filterSelectIds = ['admin-sport', 'filter-modalidade', 'painel-sport-filter', 'telao-modalidade', 'ranking-sport'];
+    filterSelectIds.forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      const currentVal = el.value;
+      const firstOpt = el.querySelector('option[value="todos"], option[value="todas"], option[value=""]');
+      const firstText = firstOpt ? firstOpt.textContent : 'Todas modalidades';
+      const firstVal = firstOpt ? firstOpt.value : (id === 'painel-sport-filter' ? 'todas' : 'todos');
+
+      let html = `<option value="${firstVal}">${escapeHTML(firstText)}</option>`;
+      sportsList.forEach(sport => {
+        const emoji = MODALIDADES_EMOJIS[sport] || '⚡';
+        html += `<option value="${escapeHTML(sport)}">${emoji} ${escapeHTML(sport)}</option>`;
+      });
+      el.innerHTML = html;
+      if (sportsList.includes(currentVal) || currentVal === firstVal) {
+        el.value = currentVal;
+      }
+    });
+
+    // 2. Selects obrigatórios de cadastro/edição (sem "todas")
+    const formSelectIds = ['admin-modalidade', 'input-modalidade', 'modalidade-select'];
+    formSelectIds.forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      const currentVal = el.value;
+      let html = '';
+      sportsList.forEach(sport => {
+        const emoji = MODALIDADES_EMOJIS[sport] || '⚡';
+        html += `<option value="${escapeHTML(sport)}">${emoji} ${escapeHTML(sport)}</option>`;
+      });
+      el.innerHTML = html;
+      if (sportsList.includes(currentVal)) {
+        el.value = currentVal;
+      } else if (sportsList.length) {
+        el.value = sportsList[0];
+      }
+    });
+  }
+
   function refreshAll() {
     currentAtletas = getAtletas();
+    updateAllSportSelects();
     const q = $('painel-search-atleta')?.value || '';
     const sport = $('painel-sport-filter')?.value || 'todas';
     populateAtletaSelect(q, sport);
@@ -1400,6 +1476,417 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.imprimirCertificado = imprimirCertificado;
 
+  // ===== Relatório Geral de Resultados em A4 Paisagem (PDF/Impressão) =====
+  function buildRelatorioGeralHTML() {
+    const hoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const formatDec = (n) => Number.isFinite(Number(n)) ? Number(n).toFixed(2).replace('.', ',') + 's' : '—';
+    const num = (v) => Number.isFinite(Number(v)) ? Number(v) : null;
+
+    const MOD_ORDER = { Basquete: 1, Futsal: 2, 'Vôlei': 3 };
+    const CAT_ORDER = {
+      'Feminino Fundamental': 1,
+      'Masculino Fundamental': 2,
+      'Feminino Médio': 3,
+      'Masculino Médio': 4
+    };
+
+    // Classificação por categoria
+    const categoryRanks = {};
+    Object.keys(MOD_ORDER).forEach(mod => {
+      Object.keys(CAT_ORDER).forEach(cat => {
+        const key = `${mod}__${cat}`;
+        categoryRanks[key] = currentAtletas
+          .filter(a => a.modalidade === mod && a.categoria === cat && a.statusParticipacao === 'ja_participou' && num(a.tempoFinal) !== null)
+          .sort((a, b) => Number(a.tempoFinal) - Number(b.tempoFinal));
+      });
+    });
+
+    const totalConcluidos = currentAtletas.filter(a => a.statusParticipacao === 'ja_participou').length;
+    const totalGeral = currentAtletas.length;
+
+    // Agrupamento por modalidade e categoria
+    const grupos = [];
+    Object.keys(MOD_ORDER).forEach(mod => {
+      Object.keys(CAT_ORDER).forEach(cat => {
+        const key = `${mod}__${cat}`;
+        const atletasDoGrupo = currentAtletas.filter(a => a.modalidade === mod && a.categoria === cat);
+        if (atletasDoGrupo.length === 0) return;
+
+        atletasDoGrupo.sort((a, b) => {
+          const aFin = a.statusParticipacao === 'ja_participou' && num(a.tempoFinal) !== null;
+          const bFin = b.statusParticipacao === 'ja_participou' && num(b.tempoFinal) !== null;
+          if (aFin && bFin) return Number(a.tempoFinal) - Number(b.tempoFinal);
+          if (aFin) return -1;
+          if (bFin) return 1;
+          return a.nome.localeCompare(b.nome, 'pt-BR');
+        });
+
+        grupos.push({ mod, cat, key, atletas: atletasDoGrupo });
+      });
+    });
+
+    const gruposHTML = grupos.map(g => {
+      const rows = g.atletas.map((a, idx) => {
+        const isFin = a.statusParticipacao === 'ja_participou' && num(a.tempoFinal) !== null;
+        let posStr = '—';
+        let medalBadge = '';
+        if (isFin) {
+          const rankList = categoryRanks[g.key] || [];
+          const pos = rankList.findIndex(x => x.id === a.id) + 1;
+          if (pos === 1) medalBadge = '🥇 ';
+          else if (pos === 2) medalBadge = '🥈 ';
+          else if (pos === 3) medalBadge = '🥉 ';
+          posStr = pos > 0 ? `${medalBadge}${pos}º` : '—';
+        }
+
+        const bonusStr = isFin && Number(a.bonus || 0) > 0 ? `−${formatDec(a.bonus)}` : (isFin ? '0,00s' : '—');
+        const penStr = isFin && Number(a.penalidade || 0) > 0 ? `+${formatDec(a.penalidade)}` : (isFin ? '0,00s' : '—');
+        const statusLabel = STATUS_LABELS[a.statusParticipacao] || a.statusParticipacao;
+
+        return `<tr class="${isFin && posStr.includes('1º') ? 'row-leader' : ''}">
+          <td class="col-pos">${posStr}</td>
+          <td class="col-nome"><strong>${escapeHTML(a.nome)}</strong></td>
+          <td class="col-turma">${escapeHTML(a.turma)}</td>
+          <td class="col-status"><span class="badge-status status-${a.statusParticipacao}">${escapeHTML(statusLabel)}</span></td>
+          <td class="col-tempo">${isFin ? formatDec(a.tempoBase) : '—'}</td>
+          <td class="col-bonus">${bonusStr}</td>
+          <td class="col-pen">${penStr}</td>
+          <td class="col-final"><strong>${isFin ? formatDec(a.tempoFinal) : '—'}</strong></td>
+        </tr>`;
+      }).join('');
+
+      return `<div class="group-section">
+        <div class="group-header">
+          <span class="group-mod">${MODALIDADES_EMOJIS[g.mod] || '⚡'} ${escapeHTML(g.mod)}</span>
+          <span class="group-cat">${escapeHTML(g.cat)}</span>
+          <span class="group-count">(${g.atletas.length} alunos)</span>
+        </div>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th style="width:9%;">Pos.</th>
+              <th style="width:31%;">Aluno</th>
+              <th style="width:10%;">Turma</th>
+              <th style="width:16%;">Status</th>
+              <th style="width:11%;">Tempo Base</th>
+              <th style="width:11%;">Bônus</th>
+              <th style="width:11%;">Penalidade</th>
+              <th style="width:11%;">Tempo Final</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </div>`;
+    }).join('');
+
+    return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Relatório Oficial de Resultados — Poliedro Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 8mm 10mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    html, body {
+      background: #fff;
+      font-family: 'Inter', Arial, sans-serif;
+      color: #02142f;
+      font-size: 3.2mm;
+      line-height: 1.35;
+    }
+    
+    .report-page {
+      padding: 4mm 2mm;
+    }
+    
+    /* Cabeçalho Oficial no estilo Poliedro Skills */
+    .report-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.2mm solid #ff7a00;
+      padding-bottom: 3.5mm;
+      margin-bottom: 4mm;
+    }
+    .brand-block h1 {
+      font: 800 6.5mm/1.1 'Plus Jakarta Sans', sans-serif;
+      color: #02142f;
+      letter-spacing: .4mm;
+    }
+    .brand-block h1 span {
+      color: #ff7a00;
+    }
+    .brand-block p {
+      font-size: 3.1mm;
+      font-weight: 600;
+      color: #5b6b84;
+      margin-top: 1mm;
+      text-transform: uppercase;
+      letter-spacing: .6mm;
+    }
+    .kpi-block {
+      display: flex;
+      gap: 3.5mm;
+    }
+    .kpi {
+      background: #f6f8fb;
+      border: .35mm solid #d6dce6;
+      border-top: .9mm solid #02142f;
+      border-radius: 1.5mm;
+      padding: 1.8mm 3mm;
+      text-align: center;
+      min-width: 26mm;
+    }
+    .kpi--main {
+      border-top-color: #ff7a00;
+      background: #fff7f0;
+    }
+    .kpi small {
+      display: block;
+      font-size: 2.2mm;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .3mm;
+      color: #5b6b84;
+    }
+    .kpi b {
+      display: block;
+      font: 700 4.6mm/1.1 'JetBrains Mono', monospace;
+      color: #02142f;
+      margin-top: .8mm;
+    }
+    .kpi--main b {
+      color: #ff7a00;
+    }
+    
+    /* Seções de Grupo (Modalidade + Categoria) */
+    .group-section {
+      margin-bottom: 4mm;
+      page-break-inside: avoid;
+    }
+    .group-header {
+      background: #02142f;
+      color: #fff;
+      padding: 1.8mm 3mm;
+      border-radius: 1.2mm 1.2mm 0 0;
+      display: flex;
+      align-items: center;
+      gap: 2.5mm;
+    }
+    .group-mod {
+      font: 800 3.6mm/1 'Plus Jakarta Sans', sans-serif;
+      color: #ff7a00;
+      letter-spacing: .3mm;
+    }
+    .group-cat {
+      font-weight: 700;
+      font-size: 3.3mm;
+      text-transform: uppercase;
+      letter-spacing: .3mm;
+    }
+    .group-count {
+      margin-left: auto;
+      font-size: 2.6mm;
+      opacity: .85;
+    }
+    
+    /* Tabela de Resultados */
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: .35mm solid #d6dce6;
+      border-top: none;
+    }
+    .report-table th {
+      background: #f0f3f8;
+      color: #02142f;
+      font-size: 2.5mm;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .3mm;
+      padding: 1.6mm 2mm;
+      text-align: left;
+      border-bottom: .4mm solid #d6dce6;
+      border-right: .2mm solid #e5e9f0;
+    }
+    .report-table th:last-child {
+      border-right: none;
+    }
+    .report-table td {
+      padding: 1.5mm 2mm;
+      border-bottom: .2mm solid #e5e9f0;
+      border-right: .2mm solid #f0f3f8;
+      font-size: 2.9mm;
+    }
+    .report-table td:last-child {
+      border-right: none;
+    }
+    .report-table tbody tr:nth-child(even) {
+      background: #fafbfe;
+    }
+    .row-leader {
+      background: #fffdf5 !important;
+    }
+    
+    .col-pos {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #02142f;
+    }
+    .col-nome strong {
+      color: #02142f;
+      font-size: 3mm;
+    }
+    .col-turma {
+      color: #5b6b84;
+    }
+    .col-status {
+      font-size: 2.4mm;
+    }
+    .col-tempo, .col-bonus, .col-pen, .col-final {
+      font-family: 'JetBrains Mono', monospace;
+      text-align: right;
+    }
+    .col-final strong {
+      color: #ff7a00;
+      font-size: 3.1mm;
+    }
+    
+    /* Badges de Status */
+    .badge-status {
+      display: inline-block;
+      padding: .6mm 1.8mm;
+      border-radius: 1mm;
+      font-weight: 700;
+      font-size: 2.2mm;
+      text-transform: uppercase;
+      letter-spacing: .2mm;
+    }
+    .status-ja_participou {
+      background: #e6f9ed;
+      color: #0e8345;
+    }
+    .status-nao_participou {
+      background: #f1f3f7;
+      color: #5b6b84;
+    }
+    .status-em_andamento {
+      background: #fff3d6;
+      color: #b25e00;
+    }
+    .status-ausente {
+      background: #fee7e7;
+      color: #c92a2a;
+    }
+    .status-desclassificado {
+      background: #f3f0ff;
+      color: #5f3dc4;
+    }
+    
+    /* Rodapé do Relatório */
+    .report-footer {
+      margin-top: 5mm;
+      padding-top: 2.5mm;
+      border-top: .35mm solid #d6dce6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 2.6mm;
+      color: #5b6b84;
+    }
+    .report-footer strong {
+      color: #02142f;
+    }
+    
+    @media screen {
+      body {
+        background: #4b5563;
+        padding: 8mm;
+      }
+      .report-page {
+        max-width: 280mm;
+        margin: 0 auto;
+        background: #fff;
+        padding: 8mm 10mm;
+        box-shadow: 0 10px 40px rgba(0,0,0,.35);
+        border-radius: 2mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-page">
+    <header class="report-header">
+      <div class="brand-block">
+        <h1>POLIEDRO <span>SKILLS</span></h1>
+        <p>Relatório Geral Oficial de Desempenho e Classificação</p>
+      </div>
+      <div class="kpi-block">
+        <div class="kpi kpi--main">
+          <small>Concluídos</small>
+          <b>${totalConcluidos} / ${totalGeral}</b>
+        </div>
+        <div class="kpi">
+          <small>Circuitos</small>
+          <b>3</b>
+        </div>
+        <div class="kpi">
+          <small>Emissão</small>
+          <b>${escapeHTML(hora)}</b>
+        </div>
+      </div>
+    </header>
+
+    ${gruposHTML}
+
+    <footer class="report-footer">
+      <div>Documento gerado em <strong>${escapeHTML(hoje)} às ${escapeHTML(hora)}</strong> • Circuito Oficial de Habilidades</div>
+      <div><strong>Coordenação de Educação Física</strong> — Colégio Poliedro</div>
+    </footer>
+  </div>
+
+  <script>
+    window.addEventListener('afterprint', () => window.close());
+    window.addEventListener('load', () => {
+      const go = () => setTimeout(() => window.print(), 150);
+      (document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2500))]) : Promise.resolve()).then(go);
+    });
+  <\/script>
+</body>
+</html>`;
+  }
+
+  function exportRelatorioPDF() {
+    if (!currentAtletas.length) {
+      alert('Não há alunos cadastrados para gerar o relatório.');
+      return;
+    }
+    const win = window.open('', '_blank', 'width=1200,height=800');
+    if (!win) {
+      alert('O navegador bloqueou a janela do relatório. Permita pop-ups para este site e tente novamente.');
+      return;
+    }
+    win.document.open();
+    win.document.write(buildRelatorioGeralHTML());
+    win.document.close();
+  }
+  window.exportRelatorioPDF = exportRelatorioPDF;
+
   function renderAdmin() {
     const body = $('admin-table-body'); if (!body) return;
     const q = ($('admin-search')?.value || '').trim().toLowerCase();
@@ -1519,6 +2006,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   ['admin-export-csv', 'admin-hero-export'].forEach(id => $(id)?.addEventListener('click', exportCSV));
+  ['admin-export-pdf', 'admin-hero-pdf'].forEach(id => $(id)?.addEventListener('click', exportRelatorioPDF));
   $('admin-restore')?.addEventListener('change', e => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1605,10 +2093,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = $('circuit-stations-list');
     if (!container) return;
 
-    // Atualiza botões de modalidade ativa
-    document.querySelectorAll('.circuit-sport-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.sport === activeEditorSport);
-    });
+    // Atualiza / Renderiza dinamicamente as abas de esportes cadastrados
+    const selector = $('circuit-sport-selector');
+    if (selector) {
+      const sportsList = Object.keys(editorCircuits || {});
+      if (!sportsList.includes(activeEditorSport)) {
+        activeEditorSport = sportsList[0] || 'Basquete';
+      }
+      selector.innerHTML = sportsList.map(sport => {
+        const emoji = MODALIDADES_EMOJIS[sport] || '⚡';
+        const isActive = sport === activeEditorSport;
+        return `<button type="button" class="circuit-sport-btn ${isActive ? 'active' : ''}" data-sport="${escapeHTML(sport)}">${emoji} ${escapeHTML(sport)}</button>`;
+      }).join('');
+    }
 
     const stations = editorCircuits[activeEditorSport] || [];
 
@@ -1805,9 +2302,139 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     saveCircuitos(editorCircuits);
+    saveModalidadesEmojis(MODALIDADES_EMOJIS);
     renderCircuitEditor();
     renderCircuitosPage();
     alert(`Circuito de ${activeEditorSport} salvo com sucesso!\nAs novas regras já estão em vigor no Painel do Árbitro e no Regulamento.`);
+  });
+
+  // Modal de Cadastro de Novo Esporte
+  const modalNewSport = $('circuit-modal-new-sport');
+  $('circuit-btn-new-sport')?.addEventListener('click', () => {
+    syncEditorFromActiveInputs();
+    $('new-sport-name').value = '';
+    $('new-sport-emoji').value = '🤾';
+    $('new-sport-template').value = 'standard';
+    modalNewSport?.classList.add('active');
+    $('new-sport-name')?.focus();
+  });
+  $('circuit-modal-close-sport')?.addEventListener('click', () => {
+    modalNewSport?.classList.remove('active');
+  });
+
+  $('circuit-form-new-sport')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const nome = $('new-sport-name')?.value.trim();
+    const emoji = $('new-sport-emoji')?.value.trim() || '⚡';
+    const tpl = $('new-sport-template')?.value || 'standard';
+
+    if (!nome) return alert('Informe o nome da modalidade esportiva.');
+    if (editorCircuits[nome]) return alert(`A modalidade "${nome}" já existe.`);
+
+    let novasEstacoes = [];
+    if (tpl === 'copy_active' && editorCircuits[activeEditorSport]) {
+      novasEstacoes = JSON.parse(JSON.stringify(editorCircuits[activeEditorSport]));
+    } else if (tpl === 'standard') {
+      novasEstacoes = [
+        { type: 'penalty', impact: 'penalty', nome: 'Penalidade / Falta Técnica', icon: '🔴', attempts: 5, unit: 2, label: 'Falta', desc: 'Violação às regras do circuito' },
+        { type: 'standard', impact: 'bonus', nome: 'Habilidade de Agilidade', icon: '↔️', bonus: 2, unit: 2, desc: 'Condução rápida no percurso demarcado' },
+        { type: 'attempts', impact: 'bonus', nome: 'Técnica de Precisão', icon: '🎯', attempts: 5, unit: 2, item: 'Acerto', desc: 'Série de 5 execuções direcionadas ao alvo' },
+        { type: 'attempts', impact: 'bonus', nome: 'Finalização Oficial', icon: emoji, attempts: 5, unit: 2, item: 'Conversão', desc: 'Série de tentativas de pontuação oficial' }
+      ];
+    } else {
+      novasEstacoes = [
+        { type: 'standard', impact: 'bonus', nome: 'Estação Principal', icon: emoji, bonus: 2, unit: 2, desc: 'Execução do percurso oficial' }
+      ];
+    }
+
+    editorCircuits[nome] = novasEstacoes;
+    MODALIDADES_EMOJIS[nome] = emoji;
+    saveModalidadesEmojis(MODALIDADES_EMOJIS);
+    saveCircuitos(editorCircuits);
+    activeEditorSport = nome;
+
+    modalNewSport?.classList.remove('active');
+    renderCircuitEditor();
+    renderCircuitosPage();
+    alert(`Modalidade "${nome}" cadastrada com sucesso! Configure agora suas estações e regras.`);
+  });
+
+  // Excluir Esporte Ativo
+  $('circuit-btn-del-sport')?.addEventListener('click', () => {
+    syncEditorFromActiveInputs();
+    const sportsList = Object.keys(editorCircuits);
+    if (sportsList.length <= 1) return alert('É necessário manter pelo menos uma modalidade cadastrada no sistema.');
+
+    // Trava de segurança: impede exclusão se houver alunos inscritos na modalidade
+    const alunosVinculados = currentAtletas.filter(a => a.modalidade === activeEditorSport);
+    if (alunosVinculados.length > 0) {
+      return alert(`Não é possível excluir "${activeEditorSport}" porque existem ${alunosVinculados.length} aluno(s) vinculados a esta modalidade. Transfira ou remova os alunos antes de excluir o esporte.`);
+    }
+
+    if (!confirm(`Deseja realmente excluir permanentemente a modalidade "${activeEditorSport}" e todas as suas estações?`)) return;
+
+    delete editorCircuits[activeEditorSport];
+    delete MODALIDADES_EMOJIS[activeEditorSport];
+    saveModalidadesEmojis(MODALIDADES_EMOJIS);
+    saveCircuitos(editorCircuits);
+
+    activeEditorSport = Object.keys(editorCircuits)[0];
+    renderCircuitEditor();
+    renderCircuitosPage();
+    alert('Modalidade removida com sucesso.');
+  });
+
+  // Backup Modular: Baixar regras do esporte selecionado em JSON
+  $('circuit-btn-backup-sport')?.addEventListener('click', () => {
+    syncEditorFromActiveInputs();
+    const current = editorCircuits[activeEditorSport];
+    if (!current) return;
+    const backupObj = {
+      tipo: 'circuito_esportivo_poliedro',
+      versao: '4.20',
+      esporte: activeEditorSport,
+      emoji: MODALIDADES_EMOJIS[activeEditorSport] || '⚡',
+      dataExportacao: new Date().toISOString(),
+      estacoes: current
+    };
+    downloadFile(`circuito-${activeEditorSport.toLowerCase().replace(/\s+/g, '-')}-regras.json`, JSON.stringify(backupObj, null, 2), 'application/json');
+  });
+
+  // Backup Modular: Restaurar regras de esporte em JSON
+  $('circuit-input-restore-sport')?.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        const estacoes = Array.isArray(data) ? data : (Array.isArray(data?.estacoes) ? data.estacoes : null);
+        if (!estacoes || !estacoes.length) throw new Error('Arquivo não contém estações válidas.');
+
+        const esporteAlvo = (data.esporte && typeof data.esporte === 'string') ? data.esporte : activeEditorSport;
+        const msg = esporteAlvo !== activeEditorSport
+          ? `O arquivo contém as regras da modalidade "${esporteAlvo}". Deseja importar para a modalidade ativa "${activeEditorSport}" ou criar/atualizar "${esporteAlvo}"? (Clique OK para importar em "${esporteAlvo}")`
+          : `Confirmar a restauração das regras para o circuito de "${activeEditorSport}"?`;
+
+        if (confirm(msg)) {
+          const nomeFinal = (data.esporte && typeof data.esporte === 'string') ? data.esporte : activeEditorSport;
+          editorCircuits[nomeFinal] = estacoes;
+          if (data.emoji) {
+            MODALIDADES_EMOJIS[nomeFinal] = data.emoji;
+            saveModalidadesEmojis(MODALIDADES_EMOJIS);
+          }
+          saveCircuitos(editorCircuits);
+          activeEditorSport = nomeFinal;
+          renderCircuitEditor();
+          renderCircuitosPage();
+          alert(`Regras da modalidade "${nomeFinal}" restauradas com sucesso!`);
+        }
+      } catch (err) {
+        alert('Arquivo de regras inválido: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   });
 
   if ($('circuit-stations-list')) {
