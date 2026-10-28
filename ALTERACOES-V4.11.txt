@@ -1,0 +1,8 @@
+POLIEDRO SKILLS V4.11 — MENU E CONTRASTE
+
+- Menu responsivo passa para o modo hamburguer antes de ocorrer sobreposição.
+- Links do menu do Telão receberam contraste branco/azul-claro.
+- Logotipo do Telão recebeu base clara para permanecer visível.
+- Menu móvel do Telão recebeu fundo azul-marinho e links claros.
+- Cabeçalho interno do Telão agora quebra corretamente sem colisões.
+- CSS e JavaScript versionados em 4.11 para evitar cache antigo.

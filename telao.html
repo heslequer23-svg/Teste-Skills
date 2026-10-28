@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Modo Telão | Poliedro Skills</title>
+<link rel="stylesheet" href="styles.css?v=4.20" />
+</head>
+<body class="inner-page telao-page">
+<nav id="navbar"><div class="container navbar">
+<a href="index.html" class="navbar__brand" title="Poliedro Skills"><span class="navbar__brand-text"><strong>POLIEDRO</strong><span>SKILLS</span></span></a>
+<button class="navbar__mobile-toggle" id="mobile-toggle" aria-label="Menu">☰</button>
+<ul class="navbar__links" id="nav-links"><li><a href="index.html">🏠 Início</a></li><li><a href="ranking.html">🏆 Ranking ao Vivo</a></li><li><a href="circuitos.html">🔄 Circuitos</a></li><li data-protected-nav hidden><a href="inscricoes.html" data-protected-link hidden>📝 Inscrições</a></li><li data-protected-nav hidden><a href="painel.html" data-protected-link hidden>📋 Painel do Árbitro</a></li><li><a href="telao.html" class="active-page">📺 Modo Telão</a></li><li data-public-login><a href="login.html">🔐 Acesso</a></li><li data-protected-nav hidden><a href="admin.html" data-protected-link hidden>⚙️ Administração</a></li><li data-admin-logout hidden><a href="#">Sair</a></li></ul>
+</div></nav>
+<main id="telao-root" class="telao">
+  <header class="telao__topbar">
+    <div><span class="telao__eyebrow">TRANSMISSÃO OFICIAL</span><h1>POLIEDRO <em>SKILLS</em></h1></div>
+    <div class="telao__actions">
+      <label>Ranking <select id="telao-modalidade"><option>Todas</option><option>Basquete</option><option>Futsal</option><option>Vôlei</option></select></label>
+      <button id="btn-tela-cheia" class="btn btn--utility">⛶ Tela cheia</button>
+    </div>
+  </header>
+
+  <section class="telao__grid telao__grid--v4">
+    <article class="telao-card telao-card--live">
+      <div class="telao-card__head telao-card__head--minimal"><span id="telao-modalidade-live">Poliedro Skills</span></div>
+      <div class="telao-athlete">
+        <small>ATLETA EM PROVA</small>
+        <h2 id="telao-atleta">Aguardando próximo atleta</h2>
+        <p id="telao-atleta-meta">Selecione o atleta no Painel do Árbitro</p>
+      </div>
+      <div id="telao-cronometro" class="telao-timer">00:00.00</div>
+      <div class="telao-live-summary">
+        <div><span>Bônus</span><strong id="telao-bonus">-0.0s</strong></div>
+        <div><span>Penalidades</span><strong id="telao-penalidade">+0.0s</strong></div>
+        <div><span>Tempo projetado</span><strong id="telao-projecao">--</strong></div>
+      </div>
+    </article>
+
+    <article class="telao-card telao-card--podium">
+      <div class="telao-card__head"><h3>🏆 Pódio ao Vivo</h3><span>Recorde: <strong id="telao-recorde">--</strong></span></div>
+      <div id="telao-podium" class="telao-podium"><div class="telao-empty">Aguardando resultados oficiais...</div></div>
+    </article>
+
+    <article class="telao-card telao-card--last">
+      <div class="telao-card__head"><h3>⚡ Último resultado</h3></div>
+      <div class="telao-last-result"><div><small id="telao-ultimo-meta"></small><strong id="telao-ultimo-nome">Nenhum resultado</strong></div><b id="telao-ultimo-tempo">--</b></div>
+    </article>
+  </section>
+
+  <section id="resultado-overlay" class="resultado-overlay" aria-live="assertive" aria-hidden="true">
+    <canvas id="confetti-canvas" class="resultado-confetti"></canvas>
+    <div class="resultado-overlay__glow"></div>
+    <div class="resultado-card">
+      <button id="resultado-fechar" class="resultado-card__close" type="button" aria-label="Fechar apresentação">×</button>
+      <div id="resultado-conquista" class="resultado-conquista"></div>
+      <p class="resultado-kicker">RESULTADO DA TENTATIVA</p>
+      <h2 id="resultado-nome">Atleta</h2>
+      <p id="resultado-meta" class="resultado-meta"></p>
+
+      <div class="resultado-tempo-bruto">
+        <span>Tempo cronometrado</span>
+        <strong id="resultado-tempo-bruto">00:00.00</strong>
+      </div>
+
+      <div class="resultado-breakdown">
+        <div class="resultado-breakdown__column resultado-breakdown__column--bonus">
+          <h3>✓ Onde ganhou tempo</h3>
+          <div id="resultado-bonus-lista"></div>
+          <footer><span>Total de bônus</span><strong id="resultado-bonus-total">-0.00s</strong></footer>
+        </div>
+        <div class="resultado-breakdown__column resultado-breakdown__column--penalty">
+          <h3>! Onde perdeu tempo</h3>
+          <div id="resultado-penalidades-lista"></div>
+          <footer><span>Total de penalidades</span><strong id="resultado-penalidades-total">+0.00s</strong></footer>
+        </div>
+      </div>
+
+      <div class="resultado-equation">
+        <span id="resultado-equacao"></span>
+      </div>
+      <div class="resultado-final">
+        <span>TEMPO FINAL</span>
+        <strong id="resultado-tempo-final">0.00s</strong>
+      </div>
+      <div id="resultado-ranking-info" class="resultado-ranking-info"></div>
+      <div class="resultado-progress"><i id="resultado-progress-bar"></i></div>
+    </div>
+  </section>
+  <footer class="telao__footer"><span>COLÉGIO POLIEDRO</span><span>Habilidade • Superação • Esporte</span></footer>
+</main>
+<script src="auth.js?v=4.20"></script>
+<script src="app.js?v=4.20"></script>
+</body>
+</html>

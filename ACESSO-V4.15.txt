@@ -1,0 +1,21 @@
+﻿POLIEDRO SKILLS V4.15 — ACESSO ADMINISTRATIVO OFICIAL
+
+Áreas com acesso restrito / protegido:
+- ⚙️ Administração (admin.html)
+- 📝 Inscrições (inscricoes.html)
+- ⚖️ Painel do Árbitro (painel.html)
+
+Páginas públicas:
+- 🏠 Início (index.html)
+- 🏆 Ranking ao Vivo (ranking.html)
+- 🔄 Circuitos (circuitos.html)
+- 📺 Modo Telão (telao.html)
+- 📅 Calendário Oficial (cronograma.html)
+
+Credenciais padrão:
+- Usuário: admin
+- Senha: PoliedroSkills2026
+
+Modos de Execução:
+1. Recomendado: Executar ABRIR-SISTEMA.bat ou iniciar.bat (abre automaticamente no servidor local com sessões seguras e sincronização instantânea).
+2. Alternativo / Offline: Abertura direta dos arquivos .html (utiliza barreira operacional em sessionStorage).

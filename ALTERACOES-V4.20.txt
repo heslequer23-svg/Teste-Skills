@@ -1,0 +1,74 @@
+POLIEDRO SKILLS V4.20 — REVISÃO COMPLETA DO SISTEMA, AUDITORIA TÉCNICA E IMPLEMENTAÇÃO INTEGRAL DE MELHORIAS
+
+1. RESUMO DA AUDITORIA GERAL:
+   Foi realizada uma varredura completa em todos os módulos do sistema (HTML, CSS, JavaScript, scripts em lote .bat e servidor Python), analisando fluxos operacionais, regras de negócio, persistência no localStorage, sincronização BroadcastChannel, consistência visual e casos de borda em importação/exportação.
+
+2. BUGS IDENTIFICADOS E CORRIGIDOS:
+
+   a) BUG CRÍTICO DE CLASSIFICAÇÃO DE CATEGORIAS (app.js):
+      - Sintoma: Alunas inscritas com termos como "Feminino 1º ano", "Fem 6A", ou simplesmente "Feminino" eram incorretamente convertidas para a categoria "Feminino Médio".
+      - Causa: O verificador de Ensino Médio realizava a checagem com `clean.includes('em')`. Como as palavras "feminino" e "fem" contêm a sequência de letras "em", a condição de Ensino Médio era avaliada como verdadeira para 100% das atletas do sexo feminino.
+      - Correção: Implementadas expressões regulares com limites de palavras `/\b(em|medio|med|ensino medio|[1-3]º\s*em)\b/i`, impedindo falsos positivos por substrings e garantindo classificação precisa entre Fundamental e Médio.
+
+   b) FALHA DE INICIALIZAÇÃO NO WINDOWS 10/11 (iniciar.bat e ABRIR-SISTEMA.bat):
+      - Sintoma: Em computadores sem Python instalado, ao clicar nos arquivos .bat, o sistema fechava sem abrir o navegador.
+      - Causa: O comando `where python` retornava sucesso (errorlevel 0) devido ao alias falso do Windows ("App execution alias" que aponta para a Microsoft Store). Ao tentar executar `python servidor.py`, o Windows emitia erro de aplicativo e abortava o script antes do fallback de abertura do navegador.
+      - Correção: O teste foi atualizado para `python -c "import sys" >nul 2>nul`, verificando a capacidade real de execução do interpretador. Caso não exista um Python funcional, o fallback `start "" index.html` é acionado imediatamente sem travar.
+
+   c) FORMATAÇÃO DE PENALIDADES DE ATIVAÇÃO ÚNICA NO EDITOR DE CIRCUITOS (app.js):
+      - Sintoma: Ao configurar uma penalidade (+s) como "1 Ativação (Sim / Não)" no painel administrativo, o sistema forçava 5 repetições e exibia grade de tentativas no Painel do Árbitro em vez de um botão direto.
+      - Causa: O gravador forçava `attempts = attempts || 5` mesmo quando o formato selecionado era padrão (standard/1 ativação).
+      - Correção: Ajustado para `attempts = format === 'standard' ? 1 : attempts`, permitindo que penalidades de ativação única (como toque faltoso, invasão) funcionem perfeitamente como botão direto de alternância.
+
+   d) ARREDONDAMENTO E PRECISÃO DECIMAL DE CENTÉSIMOS (app.js):
+      - Sintoma: Possibilidade de anomalias por imprecisão de ponto flutuante do JavaScript (ex: 45.199999999999996s), gerando falsos recordes e empates incorretos no ranking.
+      - Correção: Normalizados os cálculos de `tempoBase`, `tempoFinal`, `bonus`, `penalidade` e `improvement` com arredondamento estrito em 2 casas decimais (`.toFixed(2)` / centésimos de segundo).
+
+   e) PROTEÇÃO DO CRONÔMETRO ATIVO CONTRA LIMPEZA ACIDENTAL (app.js):
+      - Sintoma: Se o árbitro estivesse com a cronometragem em andamento e digitasse no campo de busca do atleta, o filtro podia selecionar o único resultado e zerar o cronômetro oficial na pista.
+      - Correção: Adicionada checagem `!isRunning`, garantindo que uma prova em andamento nunca seja reiniciada ou sobreposta por ações acidentais na busca.
+
+   f) MELHORIA NA IMPORTAÇÃO DE CSV (app.js):
+      - Normalização expandida para variações comuns: "Basquetebol", "Bask", "Futebol de Salão", "Fut", "Voleibol", "Vôlei de Quadra".
+      - Suporte automático a separadores por tabulação (TSV / cópia do Excel), ponto-e-vírgula (;) e vírgula (,).
+      - Aceitação de cabeçalhos adicionais ("Estudante", "Classe", "Cat", "Mod").
+
+   g) EDIÇÃO DIRETA DE INSCRIÇÕES NA TABELA (inscricoes.html e app.js):
+      - Adicionado botão de ação "✏️ Editar" na tabela de Inscrições Prévias, permitindo alterar dados e modalidades de atletas diretamente sem necessidade de alternar para o painel administrativo.
+
+   h) BACKUP TOTAL COM REGRAS E CIRCUITOS CUSTOMIZADOS (app.js):
+      - Os backups JSON gerados no painel administrativo agora exportam um objeto estruturado contendo a lista completa de atletas e as regras dinâmicas dos circuitos (Basquete, Futsal e Vôlei).
+      - A ferramenta de restauração foi enriquecida para aceitar tanto esse novo formato completo quanto os backups legados em array direto.
+
+   i) ATALHO FÍSICO NA BARRA DE ESPAÇO PARA O ÁRBITRO (painel.html e app.js):
+      - Pressionar a [Barra de Espaço] no Painel do Árbitro inicia ou pausa a cronometragem oficial instantaneamente (com trava caso o foco esteja em campos de texto), proporcionando agilidade em pista.
+      - Inserida legenda visual de atalhos sob os controles do cronômetro ([Espaço] Iniciar/Pausar e [Esc] Fechar).
+
+   j) STATUS DINÂMICO E INTELIGENTE NO MONITOR DE PISTA (ranking.html e app.js):
+      - O monitor de pista no Ranking agora exibe badges cromáticos dinâmicos:
+        * "● Ao vivo" (Verde com pulsação) durante a corrida do atleta;
+        * "⏸️ Pausada" (Amarelo) caso o cronômetro seja pausado;
+        * "⚡ Na pista" (Laranja) quando o atleta está selecionado pronto para a largada;
+        * "✅ Registrado" (Azul) após a validação oficial do tempo;
+        * "Aguardando" (Neutro) quando a pista está livre.
+      - O indicador de "Próximo competidor" respeita o filtro de modalidade ativo na tela.
+
+   k) COERÊNCIA VISUAL NO MODO TELÃO (app.js e styles.css):
+      - Ao filtrar uma modalidade no Telão (ex: Basquete), o card "Último resultado" exibe o último atleta registrado daquela modalidade específica, em perfeita sincronia com o pódio e o recorde exibidos.
+      - Adicionado seletor `.telao-sport--futsal` na folha de estilos para compatibilidade total de cores de quadra.
+
+   l) UNIFICAÇÃO DA TABELA MESTRE DE BACKUP E RANKING (CSV) (app.js):
+      - O arquivo CSV exportado foi transformado em uma Planilha Mestre Completa e Organizada:
+        * Contém 100% dos alunos cadastrados (Não participaram, Em andamento, Já participou, Ausente, Desclassificado).
+        * Agrupamento lógico: ordenado por Modalidade (Basquete ➔ Futsal ➔ Vôlei), depois por Categoria (Feminino Fundamental ➔ Masculino Fundamental ➔ Feminino Médio ➔ Masculino Médio), com os atletas ranqueados (1º, 2º, 3º...) seguidos dos alunos pendentes em ordem alfabética.
+        * Colunas padronizadas: Posição Oficial | Status | Nome do Aluno | Turma | Modalidade | Categoria | Tempo Cronometrado (s) | Total Bônus (s) | Total Penalidades (s) | Tempo Final Líquido (s) | Data do Registro Oficial.
+        * Compatibilidade com Excel Brasil: decimais formatados com vírgula (ex: 44,30), evitando erros de texto no Excel.
+        * Importação bidirecional completa: o leitor de CSV agora aceita essa planilha de volta, restaurando não apenas o cadastro dos alunos como também seus status, bônus, penalidades e tempos finais.
+
+   m) ACESSIBILIDADE E ATALHO ESC (app.js):
+      - A tecla `Escape` fecha simultaneamente o modal de inscrições, o modal de administração de alunos e a tela de celebração de resultados.
+
+3. CONTROLE DE VERSÃO E CACHE (?v=4.20):
+   - Atualizados todos os 8 arquivos HTML (index.html, ranking.html, circuitos.html, inscricoes.html, painel.html, admin.html, telao.html, login.html) para ?v=4.20.
+   - Atualizada a saída do console no servidor Python (servidor.py) para Poliedro Skills V4.20.
+   - Atualizados README.md e LEIA-ME.txt com todas as novas instruções e atalhos.

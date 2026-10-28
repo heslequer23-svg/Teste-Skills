@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.log
+.env
+.env.*
+supabase/.temp/
+supabase/.branches/
+.DS_Store
+Thumbs.db
+

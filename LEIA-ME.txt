@@ -1,0 +1,30 @@
+POLIEDRO SKILLS V4.20 — SISTEMA MULTIPÁGINAS DINÂMICO
+Circuito Oficial de Habilidades Esportivas — Colégio Poliedro
+
+COMO ABRIR NO WINDOWS
+1. Extraia todos os arquivos do ZIP para uma pasta.
+2. Clique duas vezes em "iniciar.bat" ou "ABRIR-SISTEMA.bat".
+3. Se o Python estiver instalado, o servidor local iniciará automaticamente em http://localhost:8080.
+4. Caso o Python não esteja instalado, o sistema abrirá diretamente no navegador em modo local seguro.
+
+ACESSO ADMINISTRATIVO
+- Áreas protegidas: Administração (admin.html), Inscrições (inscricoes.html) e Painel do Árbitro (painel.html).
+- Páginas públicas: Início (index.html), Ranking ao Vivo (ranking.html), Circuitos (circuitos.html) e Modo Telão (telao.html).
+- Usuário padrão: admin
+- Senha padrão: PoliedroSkills2026
+
+PÁGINAS DO SISTEMA
+- index.html: início, visão geral e métricas por modalidade
+- ranking.html: classificação oficial ao vivo com monitor de pista
+- circuitos.html: regulamento técnico com estações de Basquete, Futsal e Vôlei
+- telao.html: transmissão para projetor/TV com pódio dinâmico e último resultado
+- inscricoes.html: gestão de inscrições prévias, edição direta e importação CSV
+- painel.html: painel do árbitro com cronômetro, bônus e penalidades
+- admin.html: administração geral, backup/restauração e configurador dinâmico de circuitos
+
+ATALHOS E RECURSOS OPERACIONAIS
+- Painel do Árbitro: pressione a tecla [Barra de Espaço] para Iniciar / Pausar a cronometragem.
+- Qualquer tela: pressione a tecla [Esc] para fechar janelas modais e a tela de resultado.
+- Backup Seguro: o botão de backup JSON agora salva tanto os alunos cadastrados quanto as regras customizadas de circuitos.
+- Exportação CSV: gera relatório com data no nome do arquivo e formatação compatível com Excel no padrão brasileiro.
+- Modo Telão: ao filtrar uma modalidade no Telão, tanto o pódio quanto o último resultado sincronizam instantaneamente com o esporte escolhido.

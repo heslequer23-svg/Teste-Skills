@@ -1,0 +1,12 @@
+POLIEDRO SKILLS — V4.7 MODO TELÃO
+
+- Removido o painel operacional superior do Modo Telão:
+  AO VIVO, competidor atual, próximo competidor, progresso e sincronização.
+- Removido o texto de sincronização do rodapé.
+- Removido o indicador de status AO VIVO do painel principal.
+- Fundo alterado para azul institucional escuro de alto contraste.
+- Atleta e cronômetro ampliados e centralizados.
+- Card principal transformado em composição limpa, sem bordas ou caixas visíveis.
+- Pódio e último resultado mantidos de maneira discreta em telas grandes.
+- Em tablets e telas menores, painéis secundários são ocultados para priorizar a leitura.
+- Animações de resultado, recordes, pódio e confetes foram preservadas.

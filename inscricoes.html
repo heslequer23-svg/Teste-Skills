@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inscrições — POLIEDROSKILLS</title>
+  <meta name="description" content="Central de inscrições prévias e controle de participação.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <link href="styles.css?v=4.20" rel="stylesheet">
+  <link href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" rel="icon">
+</head>
+<body class="inner-page inscricoes-page">
+<nav id="navbar">
+  <div class="container navbar">
+    <a href="index.html" class="navbar__brand" title="Poliedro Skills">
+      <span class="navbar__brand-text"><strong>POLIEDRO</strong><span>SKILLS</span></span>
+    </a>
+    <button class="navbar__mobile-toggle" id="mobile-toggle" aria-label="Menu">☰</button>
+    <ul class="navbar__links" id="nav-links">
+      <li><a href="index.html">🏠 Início</a></li>
+      <li><a href="ranking.html">🏆 Ranking ao Vivo</a></li>
+      <li><a href="circuitos.html">🔄 Circuitos</a></li>
+      <li data-protected-nav hidden><a href="inscricoes.html" class="active-page" data-protected-link hidden>📝 Inscrições</a></li>
+      <li data-protected-nav hidden><a href="painel.html" data-protected-link hidden>📋 Painel do Árbitro</a></li>
+      <li><a href="telao.html">📺 Modo Telão</a></li>
+      <li data-public-login><a href="login.html">🔐 Acesso</a></li>
+      <li data-protected-nav hidden><a href="admin.html" data-protected-link hidden>⚙️ Administração</a></li>
+      <li data-admin-logout hidden><a href="#">Sair</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <section class="section-alt">
+    <div class="container">
+      <header class="section-header admin-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:16px;">
+        <div>
+          <h2>📝 INSCRIÇÕES PRÉVIAS</h2>
+          <p class="subtitle">Cadastre participantes antes do evento e acompanhe o status de cada tentativa.</p>
+        </div>
+        <button class="btn btn--primary" id="btn-nova-inscricao">＋ Nova inscrição</button>
+      </header>
+
+      <div class="inscricoes-stats">
+        <article class="metric-card"><small>Total</small><strong id="inscricoes-total">0</strong></article>
+        <article class="metric-card"><small>Não participaram</small><strong id="inscricoes-pendentes">0</strong></article>
+        <article class="metric-card"><small>Em andamento</small><strong id="inscricoes-andamento">0</strong></article>
+        <article class="metric-card"><small>Já participaram</small><strong id="inscricoes-finalizados">0</strong></article>
+        <article class="metric-card"><small>Ausentes</small><strong id="inscricoes-ausentes">0</strong></article>
+      </div>
+
+      <section class="inscricoes-toolbar card">
+        <div>
+          <label for="inscricoes-search">Pesquisar</label>
+          <input id="inscricoes-search" type="search" placeholder="🔍 Digite nome, turma ou categoria...">
+        </div>
+        <div>
+          <label for="inscricoes-status-filter">Status</label>
+          <select id="inscricoes-status-filter">
+            <option value="todos">Todos</option>
+            <option value="nao_participou">Não participou</option>
+            <option value="em_andamento">Em andamento</option>
+            <option value="ja_participou">Já participou</option>
+            <option value="ausente">Ausente</option>
+            <option value="desclassificado">Desclassificado</option>
+          </select>
+        </div>
+        <div>
+          <label for="inscricoes-sport-filter">Modalidade</label>
+          <select id="inscricoes-sport-filter">
+            <option value="todos">Todas</option>
+            <option>Basquete</option>
+            <option>Futsal</option>
+            <option>Vôlei</option>
+          </select>
+        </div>
+        <div>
+          <label for="input-importar-csv">Importar CSV</label>
+          <input id="input-importar-csv" type="file" accept=".csv,text/csv">
+        </div>
+      </section>
+
+      <div class="inscricoes-help">
+        Formato CSV: <code>nome, turma, categoria, modalidade</code> ou a planilha mestre completa exportada pelo sistema (com status e tempos).
+      </div>
+
+      <div class="ranking__table-wrapper">
+        <table class="ranking__table inscricoes-table">
+          <thead>
+            <tr>
+              <th>Aluno</th>
+              <th>Categoria</th>
+              <th>Modalidade</th>
+              <th>Status</th>
+              <th>Resultado</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="inscricoes-table-body"></tbody>
+        </table>
+        <div id="inscricoes-empty" class="ranking__empty hidden">Nenhuma inscrição encontrada.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modal-inscricao">
+  <div class="modal">
+    <button class="modal__close" id="modal-close" aria-label="Fechar">✕</button>
+    <h2 class="modal__title" id="modal-inscricao-title">Nova inscrição</h2>
+    <form class="modal__form" id="form-inscricao">
+      <input type="hidden" id="input-edit-id">
+      <div class="form-group">
+        <label for="input-nome">Nome completo</label>
+        <input id="input-nome" required>
+      </div>
+      <div class="form-group">
+        <label for="input-turma">Turma</label>
+        <input id="input-turma" required>
+      </div>
+      <div class="form-group">
+        <label for="input-categoria">Categoria</label>
+        <select id="input-categoria" required>
+          <option value="">Selecione...</option>
+          <option>Feminino Fundamental</option>
+          <option>Masculino Fundamental</option>
+          <option>Feminino Médio</option>
+          <option>Masculino Médio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="input-modalidade">Modalidade</label>
+        <select id="input-modalidade" required>
+          <option value="">Selecione...</option>
+          <option>Basquete</option>
+          <option>Futsal</option>
+          <option>Vôlei</option>
+        </select>
+      </div>
+      <button class="btn modal__submit" type="submit">Salvar inscrição</button>
+    </form>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>POLIEDROSKILLS — COLÉGIO POLIEDRO</p>
+    <p>Circuito Oficial de Habilidades Esportivas</p>
+  </div>
+</footer>
+<script src="auth.js?v=4.20"></script>
+<script src="app.js?v=4.20"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+POLIEDRO SKILLS V4.18 — REDESIGN DO RANKING AO VIVO, AUDITORIA GERAL DO SISTEMA E SINCRONIZAÇÃO TOTAL
+
+1. NOVO CABEÇALHO HERO V4 NO RANKING AO VIVO (ranking.html):
+   - Fundo imersivo azul marinho em degradê oficial idêntico à Página Inicial e à Administração.
+   - Badge superior: "POLIEDRO SKILLS • CLASSIFICAÇÃO OFICIAL".
+   - Título de impacto: "RANKING AO VIVO & PLACAR DE LÍDERES" com traço de destaque característico.
+   - Subtítulo com tipografia elegante e legível sobre tempos líquidos e validação técnica.
+   - Tag oficial da fórmula de cálculo integrada no Hero (Fórmula Oficial: Tempo Final = Tempo Base + Penalidades − Bônus), eliminando o antigo box solto.
+   - Ações rápidas no Hero:
+     * Botão primário com sombra para "📺 Abrir Modo Telão".
+     * Botão secundário para "📊 Baixar CSV Oficial".
+     * Link para "⚖️ Painel do Árbitro" (com proteção de acesso).
+   - Indicadores de confiança técnica no rodapé (0.01s precisão, sincronização ao vivo e cálculo instantâneo).
+
+2. PAINEL FLUTUANTE DE MONITOR DA PISTA (hero-v4__panel):
+   - Promoveu o antigo centro de comando (barra cinza de 6 colunas) para um card moderno em glassmorphism no lado direito do Hero:
+     * Status ao vivo com badge pulsante ("● Ao vivo / Em andamento").
+     * Competidor atual na pista (id="command-current") e modalidade ativa (id="command-sport").
+     * Próximo competidor da fila (id="command-next").
+     * Barra animada de progresso das tentativas (id="command-progress" e "command-progress-bar").
+     * Indicador de sincronização em tempo real com o Telão.
+
+3. CENTRAL DE CONTROLES E FILTROS REORGANIZADA (ranking.html):
+   - Filtros de Modalidade e Categoria organizados em blocos limpos, sem quebras visuais.
+   - Campo de busca de competidores amplo e espaçoso.
+   - Botão de exportação CSV padronizado visualmente, sem estilos inline "espremidos".
+   - Pódio dos Campeões (Top 3) com cabeçalho de destaque e tabela oficial com visual de alta precisão.
+
+4. AUDITORIA GLOBAL E CORREÇÃO DE BUGS EM TODAS AS TELAS:
+   - CORREÇÃO DE BUG (app.js:230): Corrigido rótulo que exibia incorretamente "Futebol" ao selecionar a modalidade Futsal na página inicial.
+   - IMPORTAÇÃO CSV UNIFICADA: Adicionado suporte para importação de CSV diretamente no painel de administração (admin.html), atualizando tanto a tabela do admin quanto a tabela de inscrições.
+   - PÁGINA INICIAL (index.html):
+     * O Card 02 (Painel do Árbitro) agora permanece sempre visível para manter a grade equilibrada de 4 áreas (01, 02, 03, 04), direcionando ao login caso o usuário não esteja autenticado.
+     * Os botões do Hero foram harmonizados: "Ver ranking ao vivo" é a ação primária destacada para visitantes, e "Abrir painel do árbitro" surge com destaque para árbitros logados.
+   - INSCRIÇÕES (inscricoes.html):
+     * Padronizados todos os rótulos de links da barra de navegação ("Ranking ao Vivo", "Painel do Árbitro", "Modo Telão").
+     * Removido o botão solto da navbar e inserido botão "+ Nova inscrição" com alinhamento perfeito no cabeçalho.
+   - PAINEL DO ÁRBITRO (painel.html):
+     * Eliminadas as 5 repetições do texto "Selecione um atleta", deixando o fluxo mais limpo e focado no cronômetro e nas estações.
+     * Adicionado botão de atalho direto para consultar as regras do regulamento em circuitos.html ("🔄 Consultar Regulamento ↗").
+   - CIRCUITOS (circuitos.html):
+     * Adicionado ID dinâmico (circuit-overview-count) para que o total de estações ativas reflita instantaneamente a configuração do painel.
+   - UNIFICAÇÃO DE CACHE GLOBAL:
+     * Todos os 8 arquivos HTML (index.html, ranking.html, circuitos.html, inscricoes.html, painel.html, admin.html, telao.html, login.html) foram sincronizados com a versão ?v=4.18 para styles.css, auth.js e app.js, garantindo que o navegador nunca carregue folhas ou scripts desatualizados.

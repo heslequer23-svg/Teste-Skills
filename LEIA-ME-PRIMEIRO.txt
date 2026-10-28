@@ -1,0 +1,28 @@
+POLIEDRO SKILLS — VERSÃO COM ANIMAÇÃO NO PAINEL DO ÁRBITRO
+
+MÉTODO RECOMENDADO
+1. Extraia todo o conteúdo do arquivo ZIP.
+2. Abra a pasta extraída.
+3. Clique duas vezes em ABRIR-SISTEMA.bat.
+4. O navegador abrirá automaticamente em http://localhost:8080/index.html.
+
+MÉTODO ALTERNATIVO
+Se o arquivo .bat não funcionar, clique duas vezes em ABRIR-DIRETO.html.
+A abertura direta funciona para testes básicos. Para sincronização mais confiável
+entre o Painel do Árbitro e o Modo Telão, use o método recomendado.
+
+PÁGINAS PRINCIPAIS
+- index.html: página inicial
+- painel.html: Painel do Árbitro
+- telao.html: Modo Telão
+- ranking.html: Ranking
+- circuitos.html: Circuitos
+- inscricoes.html: Inscrições
+- admin.html: Administração e Configuração de Circuitos
+
+TESTE DA ANIMAÇÃO
+1. Abra painel.html.
+2. Selecione um aluno.
+3. Inicie e finalize a tentativa.
+4. Registre o resultado.
+5. A animação deverá aparecer no Painel do Árbitro e no Modo Telão.

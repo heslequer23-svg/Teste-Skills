@@ -1,0 +1,19 @@
+POLIEDRO SKILLS V4.19 — CORREÇÃO CRÍTICA DE EXECUÇÃO JAVASCRIPT E RESTAURAÇÃO COMPLETA DA ADMINISTRAÇÃO
+
+1. DIAGNÓSTICO DO PROBLEMA:
+   - Sintoma: Botão "Cadastrar aluno", listagem de dados dos alunos, importação/restauração de backup JSON e o botão de alternância "Configuração de Circuitos" pararam de responder no painel administrativo (admin.html).
+   - Causa Raiz: Durante a vinculação do leitor de CSV no evento de importação em app.js (linha 1057), o encerramento do forEach continha um fechamento incompleto de parênteses ("});" em vez de "}));"). Isso causou um erro de sintaxe em tempo de análise (SyntaxError) no navegador, interrompendo imediatamente o carregamento do restante do arquivo app.js a partir da linha 1060.
+   - Consequência: Como todas as funções e ouvintes da administração interna (renderAdmin, adminOpenModal, formulário de cadastro, restauração de backup e alternância de abas de circuitos) ficavam localizados entre as linhas 1061 e 1425, nenhum ouvinte de clique era registrado.
+
+2. CORREÇÕES APLICADAS:
+   - SINTAXE EM app.js:
+     * O fechamento do leitor FileReader/forEach em app.js foi devidamente corrigido para }));, restabelecendo a execução íntegra de 100% dos scripts.
+   - RESTAURAÇÃO DAS FUNCIONALIDADES DA ADMINISTRAÇÃO (admin.html):
+     * "＋ Cadastrar aluno" (id="admin-btn-novo"): Modal de cadastro abre perfeitamente, valida campos e salva novos alunos no localStorage e no ranking.
+     * Tabela de alunos (id="admin-table-body"): Renderização automática de todos os alunos cadastrados com seus status, modalidades, tempos e botões de ação (editar, reabrir e excluir).
+     * Indicadores operacionais (id="admin-total", "admin-pendentes", "admin-participaram", "admin-recordes"): Valores atualizados instantaneamente.
+     * Cópia e Restauração de Backup (id="admin-backup", "admin-hero-backup", "admin-restore"): Download e upload de JSON restaurados com sucesso.
+     * "🎯 Configuração de Circuitos" (id="tab-btn-circuitos"): A aba alterna perfeitamente para o editor dinâmico de circuitos (Basquete, Futsal e Vôlei), permitindo adicionar, alterar e excluir estações, além de salvar regras no localStorage.
+     * "👥 Gestão de Alunos" (id="tab-btn-alunos"): Retorna fluidamente para a visualização de atletas e tabelas de controle.
+   - ATUALIZAÇÃO DO CONTROLE DE CACHE (?v=4.19):
+     * Todos os arquivos HTML (admin.html, ranking.html, index.html, painel.html, inscricoes.html, circuitos.html, telao.html, login.html) foram atualizados para carregar styles.css?v=4.19, auth.js?v=4.19 e app.js?v=4.19, garantindo que o navegador dos operadores recarregue a versão corrigida imediatamente sem servir arquivos corrompidos do cache local.

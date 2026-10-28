@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Painel do Árbitro — POLIEDROSKILLS</title>
+<meta content="Painel operacional de cronometragem e registro do Poliedro Skills." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css?v=4.20" rel="stylesheet"/>
+<link href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;⚡&lt;/text&gt;&lt;/svg&gt;" rel="icon"/>
+</head>
+<body class="inner-page painel-page">
+<nav id="navbar"><div class="container navbar">
+<a href="index.html" class="navbar__brand" title="Poliedro Skills"><span class="navbar__brand-text"><strong>POLIEDRO</strong><span>SKILLS</span></span></a>
+<button class="navbar__mobile-toggle" id="mobile-toggle" aria-label="Menu">☰</button>
+<ul class="navbar__links" id="nav-links"><li><a href="index.html" class="">🏠 Início</a></li><li><a href="ranking.html" class="">🏆 Ranking ao Vivo</a></li><li><a href="circuitos.html" class="">🔄 Circuitos</a></li><li data-protected-nav hidden><a href="inscricoes.html" data-protected-link hidden>📝 Inscrições</a></li><li data-protected-nav hidden><a href="painel.html" class="active-page" data-protected-link hidden>📋 Painel do Árbitro</a></li><li><a href="telao.html">📺 Modo Telão</a></li><li data-public-login><a href="login.html">🔐 Acesso</a></li><li data-protected-nav hidden><a href="admin.html" data-protected-link hidden>⚙️ Administração</a></li><li data-admin-logout hidden><a href="#">Sair</a></li></ul>
+</div></nav>
+<main><section class="section-alt" id="painel">
+<div class="container">
+<header class="section-header section-header--left" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+  <div>
+    <span class="section-kicker">OPERAÇÃO OFICIAL EM PISTA</span>
+    <h2 style="margin:4px 0;">⚖️ PAINEL DO ÁRBITRO</h2>
+    <p class="subtitle" style="margin:0;">Cronômetro oficial e registro tátil de bônus e penalidades em tempo real.</p>
+    <span id="painel-modalidade" hidden>Aguardando seleção</span>
+  </div>
+  <a class="btn btn--secondary" href="circuitos.html" target="_blank" title="Abrir regulamento oficial em nova aba">🔄 Consultar Regulamento ↗</a>
+</header>
+<section class="competition-command competition-command--compact" data-command-center>
+  <div class="competition-command__status"><span class="live-dot"></span><div><small>STATUS</small><strong id="command-status">Aguardando</strong></div></div>
+  <div><small>Competidor</small><strong id="command-current">Selecione um atleta</strong></div>
+  <div><small>Modalidade</small><strong id="command-sport">—</strong></div>
+  <div><small>Progresso</small><strong id="command-progress">0 / 0</strong><span class="command-progress"><i id="command-progress-bar"></i></span></div>
+  <div><small>Telão</small><strong class="sync-online">● Online</strong></div>
+</section>
+<div class="painel-main painel-main--v4">
+<div class="painel__select-group">
+  <div class="painel__select-header">
+    <label for="atleta-select" style="margin-bottom:0;">👤 Selecione o Atleta:</label>
+    <span class="painel__select-count" id="painel-atleta-count">Carregando...</span>
+  </div>
+  <div class="painel__filter-row">
+    <input type="search" id="painel-search-atleta" class="painel__search-input" placeholder="🔍 Digite para localizar por nome, turma ou categoria..." autocomplete="off">
+    <select id="painel-sport-filter" class="painel__sport-select">
+      <option value="todas">Todas modalidades</option>
+      <option value="Basquete">🏀 Basquete</option>
+      <option value="Futsal">⚽ Futsal</option>
+      <option value="Vôlei">🏐 Vôlei</option>
+    </select>
+  </div>
+  <select class="painel__select" id="atleta-select">
+    <option value="">Selecione um atleta inscrito...</option>
+  </select>
+  <div id="painel-sem-atletas-aviso" class="painel__empty-alert hidden">
+    <span>⚠️ Nenhum aluno cadastrado no sistema ainda.</span>
+    <a href="inscricoes.html" data-protected-link>Cadastrar alunos em Inscrições →</a>
+  </div>
+</div>
+<div class="cronometro">
+<div class="cronometro__display" id="cronometro-display">00:00.00</div>
+<div class="cronometro__status" id="cronometro-status">Pronto para iniciar</div>
+</div>
+<div class="cronometro__controls">
+<button class="btn btn--iniciar" id="btn-iniciar">▶ Iniciar</button>
+<button class="btn btn--pausar" id="btn-pausar">⏸ Pausar</button>
+<button class="btn btn--zerar" id="btn-zerar">↺ Zerar</button>
+</div>
+<div class="cronometro__shortcuts" style="text-align:center;margin-top:10px;font-size:0.8rem;color:var(--text-muted);">
+  <kbd style="padding:2px 7px;background:#e2e8f0;border-radius:4px;font-size:0.75rem;font-weight:600;color:var(--text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.06);">Espaço</kbd> Iniciar / Pausar &nbsp;•&nbsp; 
+  <kbd style="padding:2px 7px;background:#e2e8f0;border-radius:4px;font-size:0.75rem;font-weight:600;color:var(--text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.06);">Esc</kbd> Fechar apresentação
+</div>
+<div class="estacoes" style="margin-top:32px;">
+<h3 style="color:var(--poliedro-blue);font-size:1.15rem;margin-bottom:12px;display:flex;align-items:center;gap:8px;">🎯 Estações de Habilidade Executadas</h3>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:0.9rem;">Clique nas estações concluídas com sucesso (-2s cada):</p>
+<div class="estacoes__grid" id="estacoes-grid">
+<div class="painel__empty-state">
+<span class="painel__empty-state-icon">👤</span>
+<strong>Selecione um atleta para carregar o circuito</strong>
+<p>As estações, os bônus e as penalidades serão exibidos conforme a modalidade inscrita.</p>
+</div>
+</div>
+</div>
+<div class="painel__summary" style="margin-top:24px;">
+<div class="painel__summary-item">
+<span>Bônus Acumulado:</span>
+<span class="text-green" id="bonus-display">-0.0s</span>
+</div>
+<div class="painel__summary-item">
+<span>Penalidades Acumuladas:</span>
+<span class="text-red" id="penalty-display">+0.0s</span>
+</div>
+<div class="painel__summary-item painel__summary-item--total">
+<span>Tempo Final Projetado:</span>
+<span class="text-primary" id="tempo-final-display">0.00s</span>
+</div>
+</div>
+<button class="btn btn--registrar" id="btn-registrar">📊 Registrar Tempo no Ranking Oficial</button>
+</div>
+</div>
+</section></main>
+  <section id="resultado-overlay" class="resultado-overlay" aria-live="assertive" aria-hidden="true">
+    <canvas id="confetti-canvas" class="resultado-confetti"></canvas>
+    <div class="resultado-overlay__glow"></div>
+    <div class="resultado-card">
+      <button id="resultado-fechar" class="resultado-card__close" type="button" aria-label="Fechar apresentação">×</button>
+      <div id="resultado-conquista" class="resultado-conquista"></div>
+      <p class="resultado-kicker">RESULTADO DA TENTATIVA</p>
+      <h2 id="resultado-nome">Atleta</h2>
+      <p id="resultado-meta" class="resultado-meta"></p>
+
+      <div class="resultado-tempo-bruto">
+        <span>Tempo cronometrado</span>
+        <strong id="resultado-tempo-bruto">00:00.00</strong>
+      </div>
+
+      <div class="resultado-breakdown">
+        <div class="resultado-breakdown__column resultado-breakdown__column--bonus">
+          <h3>✓ Onde ganhou tempo</h3>
+          <div id="resultado-bonus-lista"></div>
+          <footer><span>Total de bônus</span><strong id="resultado-bonus-total">-0.00s</strong></footer>
+        </div>
+        <div class="resultado-breakdown__column resultado-breakdown__column--penalty">
+          <h3>! Onde perdeu tempo</h3>
+          <div id="resultado-penalidades-lista"></div>
+          <footer><span>Total de penalidades</span><strong id="resultado-penalidades-total">+0.00s</strong></footer>
+        </div>
+      </div>
+
+      <div class="resultado-equation">
+        <span id="resultado-equacao"></span>
+      </div>
+      <div class="resultado-final">
+        <span>TEMPO FINAL</span>
+        <strong id="resultado-tempo-final">0.00s</strong>
+      </div>
+      <div id="resultado-ranking-info" class="resultado-ranking-info"></div>
+      <div class="resultado-progress"><i id="resultado-progress-bar"></i></div>
+    </div>
+  </section>
+<footer class="footer">
+<div class="container">
+<p>POLIEDROSKILLS — COLÉGIO POLIEDRO</p>
+<p>Circuito Oficial de Habilidades Esportivas</p>
+</div>
+</footer>
+<script src="auth.js?v=4.20"></script>
+<script src="app.js?v=4.20"></script>
+</body></html>

@@ -1,0 +1,21 @@
+POLIEDRO SKILLS V4.16 — ACESSO ADMINISTRATIVO OFICIAL
+
+Áreas com acesso restrito / protegido:
+- ⚙️ Administração (admin.html) — Gestão de Alunos e Configuração Dinâmica de Circuitos
+- 📝 Inscrições (inscricoes.html) — Cadastro e Gestão de Participações
+- ⚖️ Painel do Árbitro (painel.html) — Cronômetro e Registro em Tempo Real
+
+Páginas públicas:
+- 🏠 Início (index.html)
+- 🏆 Ranking ao Vivo (ranking.html)
+- 🔄 Circuitos (circuitos.html) — Regulamento técnico atualizado em tempo real
+- 📺 Modo Telão (telao.html) — Transmissão e pódio ao vivo
+
+Credenciais padrão:
+- Usuário: admin
+- Senha: PoliedroSkills2026
+
+Novidades desta versão:
+- Tela dinâmica dentro da Administração (admin.html) na aba "🎯 Configuração de Circuitos".
+- Permite criar, editar, excluir estações, alterar a pontuação (+2s, -2s ou qualquer outro valor) e número de tentativas.
+- As mudanças são salvas instantaneamente e sincronizadas entre todas as abas abertas.

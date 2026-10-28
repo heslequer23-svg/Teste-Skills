@@ -1,0 +1,15 @@
+POLIEDRO SKILLS V4.13 — ACESSO OPERACIONAL
+
+Páginas protegidas por login:
+- Inscrições
+- Painel do Árbitro
+
+Credenciais padrão locais:
+Usuário: admin
+Senha: PoliedroSkills2026
+
+As credenciais podem ser alteradas antes de iniciar o servidor usando as variáveis de ambiente:
+POLIEDRO_ADMIN_USER
+POLIEDRO_ADMIN_PASSWORD
+
+As demais páginas permanecem públicas.

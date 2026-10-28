@@ -1,0 +1,32 @@
+POLIEDRO SKILLS V4.17 — REDESIGN DO PAINEL ADMINISTRATIVO (HERO V4 & ZERO REDUNDÂNCIAS)
+
+1. NOVO LAYOUT DO TOPO IDENTICO À PÁGINA INICIAL (admin.html):
+   - Adicionado cabeçalho no padrão "Hero V4" da página inicial:
+     * Fundo azul profundo em degradê com efeitos radiais e geométricos translúcidos.
+     * Badge superior: "POLIEDRO SKILLS • CENTRAL ADMINISTRATIVA".
+     * Título de alto impacto: "PAINEL DE CONTROLE & GESTÃO DO CIRCUITO" com traço de destaque característico.
+     * Subtítulo explicativo com tipografia elegante e legível.
+     * 3 Ações Rápidas no Hero: "＋ Cadastrar aluno", "💾 Baixar backup JSON" e "📊 Exportar CSV".
+     * Indicadores de confiança/status no rodapé do Hero (3 modalidades, sincronização ao vivo e persistência local segura).
+
+2. PAINEL FLUTUANTE DE VISÃO OPERACIONAL (hero-v4__panel):
+   - Integrado na coluna direita do Hero, substituindo os cards cinzas soltos da versão anterior.
+   - Cabeçalho com indicador de status: "● Sincronizado".
+   - 4 métricas oficiais integradas:
+     * Total de alunos (id="admin-total")
+     * Pendentes (id="admin-pendentes")
+     * Já participaram (id="admin-participaram")
+     * Recordes ativos (id="admin-recordes")
+   - Ponto de pulso animado ("Sistema operacional • Dados atualizados automaticamente").
+
+3. ELIMINAÇÃO TOTAL DE INFORMAÇÕES REPETITIVAS:
+   - Removido o card desnecessário "⚙️ Administração" que ficava dentro da própria página de administração.
+   - Removido o bloco repetitivo "Controle de inscrições" da caixa de ferramentas, que duplicava os botões "Abrir inscrições" e "Abrir painel do árbitro" (já presentes no menu superior de navegação).
+   - O card de ferramentas agora é unificado, focado 100% em Dados e Segurança do Sistema (Backup JSON, Restaurar Backup, Exportar CSV e Limpar Resultados).
+
+4. NAVEGAÇÃO DE ABAS SEGMENTADA (SEGMENTED CONTROL):
+   - As abas "👥 Gestão de Alunos" e "🎯 Configuração de Circuitos" foram reprojetadas no estilo de cápsula flutuante (segmented pill), com visual moderno, fundo suave e sombra ao selecionar.
+   - Mantida total compatibilidade com o configurador dinâmico de circuitos da V4.16.
+
+5. SINCRONIZAÇÃO E EVENTOS JS (app.js):
+   - Adicionado suporte para que os botões rápidos do Hero ("admin-hero-backup" e "admin-hero-export") acionem diretamente as rotinas oficiais de download e exportação CSV.

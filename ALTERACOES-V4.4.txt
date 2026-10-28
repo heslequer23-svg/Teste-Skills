@@ -1,0 +1,8 @@
+POLIEDRO SKILLS V4.4 — INSCRIÇÕES PRÉVIAS
+
+- Página inscricoes.html
+- Status independente do tempo: não participou, em andamento, já participou, ausente, desclassificado
+- Cadastro individual e importação CSV
+- Filtros, busca, exclusão e reabertura
+- Painel do árbitro agrupa participantes por status e bloqueia duplicidade
+- Ranking usa somente status já participou

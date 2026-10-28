@@ -1,0 +1,10 @@
+POLIEDRO SKILLS V4.8 — TELÃO PARA PROJEÇÃO
+
+- Fundo azul-marinho quase preto para contraste máximo.
+- Nome do atleta em branco puro e maior.
+- Cronômetro em dourado claro para leitura à distância.
+- Painéis de pódio e último resultado removidos da tela principal.
+- Cards e transparências eliminados do conteúdo central.
+- Marca-d’água institucional discreta.
+- Bônus, penalidades e tempo projetado mantidos sem caixas.
+- Resultado, recorde, pódio e confetes preservados.

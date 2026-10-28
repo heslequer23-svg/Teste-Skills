@@ -1,0 +1,11 @@
+POLIEDRO SKILLS V4.10 — QUADRA INTEGRADA AO FUNDO
+
+- Fundo azul-marinho profundo mantido como base do Modo Telão.
+- Desenho da quadra integrado ao próprio background.
+- Perspectiva leve para criar profundidade de transmissão esportiva.
+- Basquete: círculo central, linha central, garrafões e arcos discretos.
+- Futebol/Futsal: círculo central, linha central e áreas laterais.
+- Vôlei: rede central e linhas de ataque.
+- Cores das linhas em baixa opacidade para preservar contraste.
+- Mudança automática conforme a modalidade do atleta selecionado.
+- Responsividade preservada para TV, desktop, tablet e celular.

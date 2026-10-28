@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking ao Vivo — POLIEDROSKILLS</title>
+  <meta name="description" content="Classificação oficial em tempo real do Poliedro Skills com cronometragem oficial, bônus e penalidades.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <link href="styles.css?v=4.20" rel="stylesheet">
+  <link href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" rel="icon">
+</head>
+<body class="ranking-page">
+<nav id="navbar">
+  <div class="container navbar">
+    <a href="index.html" class="navbar__brand" title="Poliedro Skills">
+      <span class="navbar__brand-text"><strong>POLIEDRO</strong><span>SKILLS</span></span>
+    </a>
+    <button class="navbar__mobile-toggle" id="mobile-toggle" aria-label="Menu">☰</button>
+    <ul class="navbar__links" id="nav-links">
+      <li><a href="index.html">🏠 Início</a></li>
+      <li><a href="ranking.html" class="active-page">🏆 Ranking ao Vivo</a></li>
+      <li><a href="circuitos.html">🔄 Circuitos</a></li>
+      <li data-protected-nav hidden><a href="inscricoes.html" data-protected-link hidden>📝 Inscrições</a></li>
+      <li data-protected-nav hidden><a href="painel.html" data-protected-link hidden>📋 Painel do Árbitro</a></li>
+      <li><a href="telao.html">📺 Modo Telão</a></li>
+      <li data-public-login><a href="login.html">🔐 Acesso</a></li>
+      <li data-protected-nav hidden><a href="admin.html" data-protected-link hidden>⚙️ Administração</a></li>
+      <li data-admin-logout hidden><a href="#">Sair</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO V4 — RANKING AO VIVO (PADRÃO IDÊNTICO À PÁGINA INICIAL) -->
+  <section class="hero hero-v4 hero-v4--ranking" id="hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="container hero-v4__layout">
+      <div class="hero-v4__content">
+        <span class="hero__badge">POLIEDRO SKILLS • CLASSIFICAÇÃO OFICIAL</span>
+        <h1 class="hero__title">RANKING AO VIVO &amp; <span class="hero-v4__accent">PLACAR DE LÍDERES</span></h1>
+        <p class="hero__subtitle">Classificação em tempo real com validação técnica oficial da arbitragem. Tempos líquidos computados instantaneamente com acréscimo de penalidades e desconto de bônus.</p>
+        
+        <div class="ranking-formula-pill">
+          <span class="ranking-formula-pill__icon">📐</span>
+          <span class="ranking-formula-pill__text">Fórmula Oficial: <strong>Tempo Final = Tempo Base + Penalidades − Bônus</strong></span>
+        </div>
+
+        <div class="hero-v4__actions">
+          <a class="btn-v4 btn-v4--primary" href="telao.html">📺 Abrir Modo Telão</a>
+          <button type="button" class="btn-v4 btn-v4--secondary" id="btn-exportar-csv-hero">📊 Baixar CSV Oficial</button>
+          <a class="btn-v4 btn-v4--secondary" href="painel.html" data-protected-link hidden>⚖️ Painel do Árbitro</a>
+        </div>
+
+        <ul class="hero-v4__trust" aria-label="Garantias técnicas">
+          <li><strong>0.01s</strong><span>precisão oficial de cronometragem</span></li>
+          <li><strong>Ao vivo</strong><span>sincronização instantânea na pista</span></li>
+          <li><strong>Automático</strong><span>cálculo instantâneo de penalidades &amp; bônus</span></li>
+        </ul>
+      </div>
+
+      <!-- PAINEL FLUTUANTE DE COMANDO / MONITOR DA PISTA AO VIVO -->
+      <aside class="hero-v4__panel ranking-live-panel" aria-label="Monitor de pista ao vivo">
+        <div class="hero-v4__panel-head">
+          <span>Monitor de Pista</span>
+          <strong id="command-status" style="background:rgba(100,116,139,.18);border:1px solid rgba(100,116,139,.35);color:#cbd5e1;">Aguardando</strong>
+        </div>
+        
+        <div class="ranking-live-grid" data-command-center>
+          <div class="ranking-live-card">
+            <small>Competidor na pista</small>
+            <strong id="command-current">Aguardando</strong>
+            <span class="ranking-live-card__sub" id="command-sport">Todas modalidades</span>
+          </div>
+
+          <div class="ranking-live-card">
+            <small>Próximo competidor</small>
+            <strong id="command-next">A definir</strong>
+            <span class="ranking-live-card__sub">Aguardando chamada</span>
+          </div>
+
+          <div class="ranking-live-card ranking-live-card--full">
+            <div class="ranking-live-card__progress-head">
+              <small>Progresso das tentativas</small>
+              <strong id="command-progress">0 / 0</strong>
+            </div>
+            <div class="command-progress"><i id="command-progress-bar"></i></div>
+          </div>
+        </div>
+
+        <div class="hero-v4__status">
+          <span class="status-dot"></span>
+          <div>
+            <strong>Transmissão sincronizada</strong>
+            <small>Resultados enviados ao vivo para o Telão</small>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SEÇÃO PRINCIPAL DE CLASSIFICAÇÃO -->
+  <section class="section ranking-main-section" id="ranking">
+    <div class="container">
+
+      <!-- PÓDIO DOS CAMPEÕES (TOP 3) -->
+      <header class="section-header section-header--left ranking-podium-header">
+        <span class="section-kicker">QUADRO DE HONRA</span>
+        <h2>Pódio dos Campeões</h2>
+        <p class="subtitle">Os melhores tempos registrados conforme os filtros ativos de modalidade e categoria.</p>
+      </header>
+
+      <section class="ranking-podium-v4" id="ranking-podium-v4" aria-label="Pódio do ranking"></section>
+
+      <!-- BARRA DE CONTROLE (FILTROS E BUSCA INTEGRADOS) -->
+      <div class="ranking-controls-card card">
+        <div class="ranking-controls-row">
+          <div class="ranking-filter-block">
+            <span class="ranking-filter-label">Modalidade:</span>
+            <div class="filter-group" id="filter-modalidade">
+              <button type="button" class="filter-btn active" data-filter="todas">Todas</button>
+              <button type="button" class="filter-btn" data-filter="Basquete">🏀 Basquete</button>
+              <button type="button" class="filter-btn" data-filter="Futsal">⚽ Futsal</button>
+              <button type="button" class="filter-btn" data-filter="Vôlei">🏐 Vôlei</button>
+            </div>
+          </div>
+
+          <div class="ranking-filter-block">
+            <span class="ranking-filter-label">Categoria:</span>
+            <div class="filter-group" id="filter-categoria">
+              <button type="button" class="filter-btn active" data-filter="todas">Todas as Categorias</button>
+              <button type="button" class="filter-btn" data-filter="Feminino Fundamental">Feminino Fundamental</button>
+              <button type="button" class="filter-btn" data-filter="Masculino Fundamental">Masculino Fundamental</button>
+              <button type="button" class="filter-btn" data-filter="Feminino Médio">Feminino Médio</button>
+              <button type="button" class="filter-btn" data-filter="Masculino Médio">Masculino Médio</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ranking-search-row">
+          <div class="ranking__search">
+            <input id="search-input" placeholder="🔍 Buscar competidor por nome ou turma..." type="search" autocomplete="off">
+          </div>
+          <button type="button" class="btn btn--secondary" id="btn-exportar-csv">📊 Exportar CSV</button>
+        </div>
+      </div>
+
+      <!-- TABELA OFICIAL DE CLASSIFICAÇÃO -->
+      <div class="ranking__table-wrapper">
+        <table class="ranking__table">
+          <thead>
+            <tr>
+              <th>Pos.</th>
+              <th>Atleta</th>
+              <th>Categoria</th>
+              <th>Modalidade</th>
+              <th>Tempo Base</th>
+              <th>Bônus</th>
+              <th>Penalidades</th>
+              <th>Tempo Final</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-table-body"></tbody>
+        </table>
+        <div class="ranking__empty" id="ranking-empty">Nenhum resultado encontrado para os filtros selecionados.</div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>POLIEDROSKILLS — COLÉGIO POLIEDRO</p>
+    <p>Circuito Oficial de Habilidades Esportivas</p>
+  </div>
+</footer>
+<script src="auth.js?v=4.20"></script>
+<script src="app.js?v=4.20"></script>
+</body>
+</html>

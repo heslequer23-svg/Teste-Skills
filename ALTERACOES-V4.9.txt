@@ -1,0 +1,9 @@
+POLIEDRO SKILLS V4.9 — TELÃO DINÂMICO POR MODALIDADE
+
+- Fundo azul-marinho profundo mantido em todas as modalidades.
+- Basquete: linhas de quadra e círculo central discretos.
+- Futebol/Futsal: linha central, círculo e áreas discretas.
+- Vôlei: rede e linhas de ataque discretas.
+- Padrões em baixa opacidade para preservar contraste.
+- Modalidade muda automaticamente conforme o atleta selecionado.
+- Cronômetro, resultado, recorde, pódio e confetes preservados.

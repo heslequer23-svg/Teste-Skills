@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acesso administrativo | Poliedro Skills</title>
+<link rel="stylesheet" href="styles.css?v=4.20" />
+</head>
+<body class="login-page">
+<main class="login-shell">
+  <section class="login-card" aria-labelledby="login-title">
+    <a class="login-brand" href="index.html" aria-label="Voltar ao início">
+      <span>POLIEDRO</span><strong>SKILLS</strong>
+    </a>
+    <div class="login-copy">
+      <span class="login-kicker">ACESSO RESTRITO</span>
+      <h1 id="login-title">Área administrativa</h1>
+      <p>Entre para acessar Administração, Inscrições e Painel do Árbitro.</p>
+    </div>
+    <div class="login-access-grid" aria-label="Áreas protegidas">
+      <span>⚙️ Administração</span><span>📝 Inscrições</span><span>⚖️ Painel do Árbitro</span>
+    </div>
+    <form id="login-form" class="login-form">
+      <label for="login-usuario">Usuário</label>
+      <input id="login-usuario" name="usuario" autocomplete="username" required />
+      <label for="login-senha">Senha</label>
+      <input id="login-senha" name="senha" type="password" autocomplete="current-password" required />
+      <p id="login-feedback" class="login-feedback" role="alert" aria-live="polite"></p>
+      <button type="submit" class="btn-v4 btn-v4--primary login-submit">Entrar</button>
+    </form>
+    <a href="index.html" class="login-back">← Voltar para o sistema público</a>
+  </section>
+</main>
+<script src="auth.js?v=4.20"></script>
+<script>
+window.addEventListener('DOMContentLoaded', async () => {
+  const form = document.getElementById('login-form');
+  const feedback = document.getElementById('login-feedback');
+  const params = new URLSearchParams(location.search);
+  const requested = (params.get('next') || '').toLowerCase();
+  const allowed = new Set(['admin.html', 'inscricoes.html', 'painel.html']);
+  const next = allowed.has(requested) ? requested : 'admin.html';
+
+  if (await window.PoliedroAuth.isAuthenticated()) {
+    location.replace(next);
+    return;
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    feedback.textContent = 'Verificando acesso…';
+    const result = await window.PoliedroAuth.login(
+      document.getElementById('login-usuario').value.trim(),
+      document.getElementById('login-senha').value
+    );
+    if (result.ok) {
+      feedback.textContent = 'Acesso autorizado.';
+      location.replace(next);
+    } else {
+      feedback.textContent = result.message || 'Não foi possível entrar.';
+      button.disabled = false;
+      document.getElementById('login-senha').select();
+    }
+  });
+});
+</script>
+</body>
+</html>
+

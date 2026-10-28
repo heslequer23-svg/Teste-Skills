@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POLIEDROSKILLS — Plataforma Oficial de Habilidades Esportivas</title>
+<meta content="Circuito e avaliação oficial de habilidades esportivas do Colégio Poliedro. Basquete, Futsal e Vôlei com ranking e cronometragem em tempo real." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css?v=4.20" rel="stylesheet"/>
+<link href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;⚡&lt;/text&gt;&lt;/svg&gt;" rel="icon"/>
+</head>
+<body class="home-page">
+<nav id="navbar"><div class="container navbar">
+<a href="index.html" class="navbar__brand" title="Poliedro Skills"><span class="navbar__brand-text"><strong>POLIEDRO</strong><span>SKILLS</span></span></a>
+<button class="navbar__mobile-toggle" id="mobile-toggle" aria-label="Menu">☰</button>
+<ul class="navbar__links" id="nav-links"><li><a href="index.html" class="active-page">🏠 Início</a></li><li><a href="ranking.html" class="">🏆 Ranking ao Vivo</a></li><li><a href="circuitos.html" class="">🔄 Circuitos</a></li><li data-protected-nav hidden><a href="inscricoes.html" data-protected-link hidden>📝 Inscrições</a></li><li data-protected-nav hidden><a href="painel.html" class="" data-protected-link hidden>📋 Painel do Árbitro</a></li><li><a href="telao.html">📺 Modo Telão</a></li><li data-public-login><a href="login.html">🔐 Acesso</a></li><li data-protected-nav hidden><a href="admin.html" data-protected-link hidden>⚙️ Administração</a></li><li data-admin-logout hidden><a href="#">Sair</a></li></ul>
+
+</div></nav>
+<main>
+<section class="hero hero-v4" id="hero">
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="container hero-v4__layout">
+    <div class="hero-v4__content">
+      <span class="hero__badge">POLIEDRO SKILLS • CIRCUITO OFICIAL DE HABILIDADES</span>
+      <h1 class="hero__title">ELEVE O DESEMPENHO EM CADA <span class="hero-v4__accent">DESAFIO E SUPERAÇÃO</span></h1>
+      <p class="hero__subtitle">Circuito técnico e avaliação de habilidades esportivas para alunos do Ensino Fundamental e Médio. Provas dinâmicas de agilidade, técnica e precisão, com validação oficial e ranking em tempo real para eventos, aulas e competições escolares.</p>
+      <div class="hero-v4__actions">
+        <a class="btn-v4 btn-v4--primary" href="ranking.html">Ver ranking ao vivo</a>
+        <a class="btn-v4 btn-v4--secondary" href="painel.html" data-protected-link hidden>Abrir painel do árbitro</a>
+        <a class="btn-v4 btn-v4--secondary" href="telao.html">Modo Telão</a>
+      </div>
+      <ul class="hero-v4__trust" aria-label="Diferenciais do sistema">
+        <li><strong>3</strong><span>modalidades oficiais</span></li>
+        <li><strong>Ao vivo</strong><span>cronometragem e ranking instantâneo</span></li>
+        <li><strong>Multiuso</strong><span>eventos, aulas, competições e telão</span></li>
+      </ul>
+    </div>
+    <aside class="hero-v4__panel modality-overview" aria-label="Visão geral por modalidade">
+      <div class="hero-v4__panel-head"><span>Visão geral</span><strong>Evento ativo</strong></div>
+      <div class="modality-overview__tabs" role="tablist" aria-label="Selecionar modalidade">
+        <button class="modality-overview__tab active" type="button" role="tab" aria-selected="true" data-overview-sport="Basquete">🏀 Basquete</button>
+        <button class="modality-overview__tab" type="button" role="tab" aria-selected="false" data-overview-sport="Futsal">⚽ Futsal</button>
+        <button class="modality-overview__tab" type="button" role="tab" aria-selected="false" data-overview-sport="Vôlei">🏐 Vôlei</button>
+      </div>
+      <div class="modality-overview__screen" aria-live="polite">
+        <div class="modality-overview__heading">
+          <span id="overview-sport-icon">🏀</span>
+          <div><small>Modalidade</small><strong id="overview-sport-name">Basquete</strong></div>
+        </div>
+        <div class="modality-overview__metrics">
+          <article><small>Alunos inscritos</small><strong id="overview-enrolled">0</strong></article>
+          <article><small>Já participaram</small><strong id="overview-finished">0</strong></article>
+          <article><small>Recorde</small><strong id="overview-record">—</strong></article>
+        </div>
+        <div class="modality-overview__pending"><span>Pendentes</span><strong id="overview-pending">0</strong></div>
+      </div>
+      <div class="hero-v4__status"><span class="status-dot"></span><div><strong>Sistema operacional</strong><small>Dados atualizados automaticamente</small></div></div>
+    </aside>
+  </div>
+</section>
+
+<section class="section home-access" id="acessos">
+  <div class="container">
+    <header class="section-header section-header--left">
+      <span class="section-kicker">NAVEGAÇÃO DO SISTEMA</span>
+      <h2>Escolha a área de trabalho</h2>
+      <p class="subtitle">Cada página foi desenhada para uma tarefa específica, mantendo os mesmos dados e resultados.</p>
+    </header>
+    <div class="home-access__grid home-access__grid--v4">
+      <a class="access-card" href="ranking.html">
+        <div class="access-card__top">
+          <span class="access-card__num">01</span>
+          <span class="access-card__tag">Acompanhamento</span>
+        </div>
+        <h3>Ranking ao Vivo</h3>
+        <p>Classificação, filtros, busca e atualização instantânea dos competidores.</p>
+        <span class="access-card__link">Abrir ranking <b>→</b></span>
+      </a>
+      <a class="access-card" href="painel.html">
+        <div class="access-card__top">
+          <span class="access-card__num">02</span>
+          <span class="access-card__tag">Operação</span>
+        </div>
+        <h3>Painel do Árbitro</h3>
+        <p>Cronômetro oficial, registro de bônus, faltas e validação em pista.</p>
+        <span class="access-card__link">Abrir painel <b>→</b></span>
+      </a>
+      <a class="access-card access-card--telao" href="telao.html">
+        <div class="access-card__top">
+          <span class="access-card__num">03</span>
+          <span class="access-card__tag">Transmissão</span>
+        </div>
+        <h3>Modo Telão</h3>
+        <p>Competidor ao vivo na pista, resultado, pódio dinâmico e recordes.</p>
+        <span class="access-card__link">Abrir telão <b>→</b></span>
+      </a>
+      <a class="access-card" href="circuitos.html">
+        <div class="access-card__top">
+          <span class="access-card__num">04</span>
+          <span class="access-card__tag">Regulamento</span>
+        </div>
+        <h3>Circuitos Oficiais</h3>
+        <p>Regras, pontuações e estações técnicas de Basquete, Futsal e Vôlei.</p>
+        <span class="access-card__link">Ver circuitos <b>→</b></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt workflow-v4" id="como-funciona">
+  <div class="container">
+    <header class="section-header section-header--left">
+      <span class="section-kicker">FLUXO INTEGRADO</span>
+      <h2>Da inscrição ao resultado oficial</h2>
+      <p class="subtitle">Um processo ágil para a arbitragem, automatizado pelo sistema e 100% transparente para alunos e professores.</p>
+    </header>
+    <div class="workflow-v4__grid">
+      <article class="workflow-card">
+        <div class="workflow-card__top">
+          <span class="workflow-card__num">01</span>
+          <span class="workflow-card__tag">Passo 1</span>
+        </div>
+        <h3>Inscrição & Categoria</h3>
+        <p>Cadastro rápido do aluno com categoria, turma e modalidade escolhida para o circuito.</p>
+      </article>
+      <article class="workflow-card">
+        <div class="workflow-card__top">
+          <span class="workflow-card__num">02</span>
+          <span class="workflow-card__tag">Passo 2</span>
+        </div>
+        <h3>Execução em Pista</h3>
+        <p>O árbitro opera o cronômetro oficial e registra acertos, bônus e faltas em tempo real.</p>
+      </article>
+      <article class="workflow-card">
+        <div class="workflow-card__top">
+          <span class="workflow-card__num">03</span>
+          <span class="workflow-card__tag">Passo 3</span>
+        </div>
+        <h3>Cálculo Instantâneo</h3>
+        <p>O sistema processa automaticamente o tempo final com precisão oficial de centésimos de segundo.</p>
+      </article>
+      <article class="workflow-card">
+        <div class="workflow-card__top">
+          <span class="workflow-card__num">04</span>
+          <span class="workflow-card__tag">Passo 4</span>
+        </div>
+        <h3>Ranking & Telão ao Vivo</h3>
+        <p>Os resultados são transmitidos imediatamente para o Telão, Ranking geral e recordes.</p>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="footer">
+<div class="container">
+<p>POLIEDROSKILLS — COLÉGIO POLIEDRO</p>
+<p>Circuito Oficial de Habilidades Esportivas</p>
+</div>
+</footer>
+<script src="auth.js?v=4.20"></script>
+<script src="app.js?v=4.20"></script>
+</body></html>

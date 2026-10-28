@@ -1,0 +1,44 @@
+POLIEDRO SKILLS V4.16 — CONFIGURADOR DINÂMICO DE CIRCUITOS E MODALIDADES
+
+1. CONFIGURADOR DINÂMICO NO PAINEL ADMINISTRATIVO (admin.html):
+   - Sistema de abas no topo da Administração: "Gestão de Alunos" e "Configuração de Circuitos".
+   - Seletor de modalidade para Basquete, Futsal e Vôlei.
+   - Resumo em tempo real de estações ativas, bônus potencial e penalidades máximas.
+   - Cada estação permite configurar dinamicamente:
+     * Nome da estação
+     * Tipo de impacto: Bônus (- segundos) ou Penalidade (+ segundos)
+     * Formato: 1 Ativação (Sim/Não) ou Por Tentativas (múltiplos acertos/faltas)
+     * Tempo em segundos por acerto/falta (0.5s a 30s)
+     * Quantidade de tentativas (1 a 25)
+     * Rótulo individual de cada tentativa (ex: Passe, Cesta, Erro)
+     * Descrição/Instrução técnica para o regulamento
+     * Emoji/ícone personalizado
+   - Botão para adicionar novas estações livremente (+ Adicionar Nova Estação).
+   - Botão para excluir estações com confirmação (🗑).
+   - Botão para salvar alterações (Salvar Circuito) com persistência em localStorage e sincronização em tempo real via BroadcastChannel / storage events.
+   - Botão para restaurar os padrões oficiais de fábrica a qualquer momento.
+
+2. INTEGRAÇÃO COM O PAINEL DO ÁRBITRO (painel.html):
+   - As estações do atleta selecionado são montadas dinamicamente com base no circuito configurado.
+   - Suporte completo a estações simples de penalidade (+X s) com destaque visual em vermelho.
+   - Cálculo instantâneo e registro de bônus, penalidades e tempo final respeitando a pontuação exata de cada estação.
+   - Breakdown de desempenho no ranking e apresentação do telão totalmente alinhados às regras ativas.
+
+3. ATUALIZAÇÃO AUTOMÁTICA DO REGULAMENTO (circuitos.html):
+   - A página pública de circuitos renderiza os cards de cada estação diretamente a partir da configuração ativa.
+   - Mostra a pontuação (+X s / -X s), número de tentativas e explicações técnicas atualizadas.
+
+4. SIMPLIFICAÇÃO DO SISTEMA E REMOÇÃO DO CALENDÁRIO:
+   - Removido o Calendário Oficial (cronograma.html), eliminando poluição visual na barra de navegação de todas as telas.
+   - Removido o bloco de código do calendário em app.js (~120 linhas), tornando a aplicação mais leve e rápida.
+   - Ajustada a tela inicial (index.html), deixando o grid de atalhos equilibrado em 4 áreas principais (Ranking, Árbitro, Telão e Circuitos).
+   - O arquivo cronograma.html foi configurado para redirecionar automaticamente para a página inicial caso acessado.
+   - ABRIR-DIRETO.html: adição de botão de acesso direto para index.html facilitando o uso offline.
+
+5. SELEÇÃO E LOCALIZAÇÃO DE ALUNOS NO PAINEL DO ÁRBITRO (painel.html):
+   - Corrigida a inicialização da função central refreshAll(), que impedia o preenchimento do seletor de alunos no painel.
+   - Adicionado campo de busca em tempo real ("🔍 Digite para localizar por nome, turma ou categoria...").
+   - Adicionado filtro rápido por modalidade (Todas / Basquete / Futsal / Vôlei).
+   - Contador de alunos aptos e filtrados exibido no cabeçalho do seletor.
+   - Alerta visual caso nenhum aluno esteja cadastrado no sistema, com link direto para a tela de inscrições.
+   - Suporte a reabertura de tentativa caso o atleta já possua tempo registrado.

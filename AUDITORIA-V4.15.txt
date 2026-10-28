@@ -1,0 +1,15 @@
+POLIEDRO SKILLS — V4.15 — REVISÃO GERAL & AUDITORIA COMPLETA
+
+Correções aplicadas:
+- Corrigido erro crítico de runtime (ReferenceError: setText is not defined) em app.js que impedia execução de scripts.
+- Corrigida brecha de segurança no servidor local e front-end (normalização case-insensitive de rotas protegidas contra bypass).
+- Removidos botões e modais públicos residuais; inscrições centralizadas exclusivamente na área protegida.
+- Normalizador inteligente de modalidades adicionado à importação de CSV (suporta variações como Futebol, basquete, volei, etc.).
+- Proteções defensivas adicionadas para temporizador, cálculos de bônus e apresentação de resultados contra referências nulas.
+- Alinhada a estrutura do navbar em todas as páginas do sistema (incluindo telão).
+- Adicionado suporte UTF-8 explícito (chcp 65001) nos scripts batch de inicialização.
+- Instalações novas começam limpas sem dados fictícios.
+- Ranking, Telão e exportação consideram apenas atletas com status "Já participou" e tempo válido.
+
+Observação de segurança:
+O modo por servidor local oferece a proteção correta das páginas. O fallback de abertura direta é uma barreira operacional para testes locais e offline.

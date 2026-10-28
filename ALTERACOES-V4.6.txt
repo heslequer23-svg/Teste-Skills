@@ -1,0 +1,8 @@
+POLIEDRO SKILLS V4.6 — PADRONIZAÇÃO VISUAL GLOBAL
+
+- Enquadramento e largura de conteúdo unificados.
+- Títulos, subtítulos e descrições alinhados ao mesmo padrão.
+- Espaçamentos de páginas, seções, cards e formulários normalizados.
+- Hero, navegação, tabelas, calendário, circuitos, inscrições e administração refinados.
+- Responsividade revisada para desktop, tablet e celular.
+- Nenhuma regra funcional ou dado do sistema foi removido.

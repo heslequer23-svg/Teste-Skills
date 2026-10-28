@@ -1,0 +1,8 @@
+POLIEDRO SKILLS — AUDITORIA V4.3.1
+
+Correção aplicada:
+- Novas inscrições com tempoFinal vazio não são mais convertidas para 0.
+- Inscrições pendentes aparecem no seletor do Painel do Árbitro.
+- Migração automática corrige inscrições antigas afetadas (tempo 0, sem tempo-base e sem data de registro).
+- Após registrar uma tentativa, o aluno deixa a fila pendente e entra no ranking.
+- Cache de CSS/JavaScript atualizado para 4.3.1.

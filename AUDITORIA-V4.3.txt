@@ -1,0 +1,23 @@
+POLIEDRO SKILLS V4.3 — AUDITORIA E OTIMIZAÇÃO
+
+Verificações realizadas:
+- Sintaxe JavaScript e Python
+- Integridade dos arquivos HTML
+- IDs duplicados
+- Links internos e recursos compartilhados
+- Navegação entre páginas
+- Ranking, filtros e busca
+- Cronômetro, bônus, penalidades e tempo final
+- Sincronização por localStorage e BroadcastChannel
+- Calendário mensal, filtros e detalhes
+- Modo Telão e apresentação de resultados
+- Responsividade e acessibilidade básica
+- Estrutura e integridade do ZIP
+
+Correções principais:
+- Servidor escolhe automaticamente uma porta livre entre 8080 e 8090.
+- Dados antigos do localStorage são normalizados e reparados automaticamente.
+- Valores negativos ou inválidos de bônus, penalidades e tempos são protegidos.
+- Modalidades inválidas recebem fallback seguro.
+- Cache atualizado para V4.3.
+- Arquivos temporários removidos do pacote final.

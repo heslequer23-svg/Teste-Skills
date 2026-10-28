@@ -1,0 +1,12 @@
+POLIEDRO SKILLS V4.14 — ACESSO ADMINISTRATIVO
+
+Áreas protegidas:
+- Administração
+- Inscrições
+- Painel do Árbitro
+
+Usuário padrão: admin
+Senha padrão: PoliedroSkills2026
+
+O login funciona tanto pelo servidor local quanto na abertura direta do HTML.
+Observação: o modo direto usa sessionStorage e serve como controle operacional local, não como autenticação segura para publicação na internet.

@@ -1,0 +1,9 @@
+POLIEDRO SKILLS V4.5 — ÁREA ADMINISTRATIVA
+
+- Nova página admin.html.
+- Cadastro e edição de alunos dentro do sistema.
+- Alteração de status, exclusão e reabertura de tentativa.
+- Backup e restauração JSON.
+- Limpeza de resultados mantendo os cadastros.
+- Indicadores gerais de alunos, pendentes, participantes e modalidades com recorde.
+- Integração com Inscrições, Painel do Árbitro e Ranking pelo mesmo localStorage.

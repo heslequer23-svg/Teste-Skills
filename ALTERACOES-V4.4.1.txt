@@ -1,0 +1,6 @@
+POLIEDRO SKILLS V4.4.1 — VISÃO GERAL POR MODALIDADE
+
+- Visão geral simplificada em três telas selecionáveis: Basquete, Futebol e Vôlei.
+- Cada tela mostra apenas inscritos, participantes, pendentes e recorde.
+- Dados calculados dinamicamente a partir das inscrições salvas.
+- Funcionalidades anteriores preservadas.

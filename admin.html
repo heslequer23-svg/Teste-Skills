@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administração — POLIEDROSKILLS</title>
+  <meta name="description" content="Central administrativa interna do Poliedro Skills.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <link href="styles.css?v=4.20" rel="stylesheet">
+  <link href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" rel="icon">
+</head>
+<body class="admin-page">
+<nav id="navbar">
+  <div class="container navbar">
+    <a href="index.html" class="navbar__brand" title="Poliedro Skills">
+      <span class="navbar__brand-text"><strong>POLIEDRO</strong><span>SKILLS</span></span>
+    </a>
+    <button class="navbar__mobile-toggle" id="mobile-toggle" aria-label="Menu">☰</button>
+    <ul class="navbar__links" id="nav-links">
+      <li><a href="index.html">🏠 Início</a></li>
+      <li><a href="ranking.html">🏆 Ranking ao Vivo</a></li>
+      <li><a href="circuitos.html">🔄 Circuitos</a></li>
+      <li data-protected-nav hidden><a href="inscricoes.html" data-protected-link hidden>📝 Inscrições</a></li>
+      <li data-protected-nav hidden><a href="painel.html" data-protected-link hidden>📋 Painel do Árbitro</a></li>
+      <li><a href="telao.html">📺 Modo Telão</a></li>
+      <li data-public-login><a href="login.html">🔐 Acesso</a></li>
+      <li data-protected-nav hidden><a href="admin.html" class="active-page" data-protected-link hidden>⚙️ Administração</a></li>
+      <li data-admin-logout hidden><a href="#">Sair</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO V4 — CENTRAL ADMINISTRATIVA (PADRÃO IDÊNTICO À PÁGINA INICIAL) -->
+  <section class="hero hero-v4 hero-v4--admin" id="hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="container hero-v4__layout">
+      <div class="hero-v4__content">
+        <span class="hero__badge">POLIEDRO SKILLS • CENTRAL ADMINISTRATIVA</span>
+        <h1 class="hero__title">PAINEL DE CONTROLE &amp; <span class="hero-v4__accent">GESTÃO DO CIRCUITO</span></h1>
+        <p class="hero__subtitle">Gerenciamento integrado de competidores, configuração dinâmica de regras por modalidade, exportação oficial e segurança de dados em tempo real.</p>
+        <div class="hero-v4__actions">
+          <button type="button" class="btn-v4 btn-v4--primary" id="admin-btn-novo">＋ Cadastrar aluno</button>
+          <button type="button" class="btn-v4 btn-v4--secondary" id="admin-hero-backup">💾 Baixar backup JSON</button>
+          <button type="button" class="btn-v4 btn-v4--secondary" id="admin-hero-export">📊 Exportar CSV</button>
+        </div>
+        <ul class="hero-v4__trust" aria-label="Destaques operacionais">
+          <li><strong>3</strong><span>modalidades oficiais</span></li>
+          <li><strong>Ao vivo</strong><span>sincronizado com árbitro &amp; telão</span></li>
+          <li><strong>Seguro</strong><span>banco local com backup instantâneo</span></li>
+        </ul>
+      </div>
+
+      <aside class="hero-v4__panel admin-overview" aria-label="Visão geral operacional">
+        <div class="hero-v4__panel-head">
+          <span>Visão Operacional</span>
+          <strong style="background:rgba(22,163,106,.2);border:1px solid rgba(105,237,177,.35);color:#c6f6df;">● Sincronizado</strong>
+        </div>
+        <div class="hero-v4__stats">
+          <article class="stat-card">
+            <span class="stat-card__icon">👥</span>
+            <strong class="stat-card__value" id="admin-total">0</strong>
+            <span class="stat-card__label">Total de alunos</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-card__icon">⏳</span>
+            <strong class="stat-card__value" id="admin-pendentes">0</strong>
+            <span class="stat-card__label">Pendentes</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-card__icon">✅</span>
+            <strong class="stat-card__value" id="admin-participaram">0</strong>
+            <span class="stat-card__label">Já participaram</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-card__icon">🏆</span>
+            <strong class="stat-card__value" id="admin-recordes">0</strong>
+            <span class="stat-card__label">Recordes ativos</span>
+          </article>
+        </div>
+        <div class="hero-v4__status">
+          <span class="status-dot"></span>
+          <div>
+            <strong>Sistema operacional</strong>
+            <small>Dados atualizados automaticamente</small>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SEÇÃO PRINCIPAL DE OPERAÇÕES -->
+  <section class="section-alt admin-main-section">
+    <div class="container">
+
+      <!-- NAVEGAÇÃO DE ABAS SEGMENTADA -->
+      <div class="admin-nav-tabs" role="tablist" aria-label="Navegação da Administração">
+        <button type="button" class="admin-nav-tab active" id="tab-btn-alunos">👥 Gestão de Alunos</button>
+        <button type="button" class="admin-nav-tab" id="tab-btn-circuitos">🎯 Configuração de Circuitos</button>
+      </div>
+
+      <!-- ABA 1: GESTÃO DE ALUNOS -->
+      <div id="admin-view-alunos">
+        <!-- FERRAMENTAS DE SEGURANÇA E DADOS (SEM REPETIÇÕES) -->
+        <section class="admin-tools">
+          <div class="admin-tools__info">
+            <span class="section-kicker" style="margin-bottom:6px;">SEGURANÇA DOS DADOS</span>
+            <h3>Cópia de Segurança &amp; Relatórios</h3>
+            <p>Faça cópias de segurança em JSON, restaure arquivos salvos, exporte o ranking para CSV ou reinicie os resultados das tentativas mantendo os alunos cadastrados.</p>
+          </div>
+          <div class="admin-tools__buttons">
+            <button type="button" class="btn btn--secondary" id="admin-backup">💾 Baixar backup JSON</button>
+            <label class="btn btn--secondary admin-file-label">📂 Restaurar backup<input type="file" id="admin-restore" accept="application/json,.json" hidden></label>
+            <label class="btn btn--secondary admin-file-label">📥 Importar alunos CSV<input type="file" id="admin-import-csv" accept=".csv,text/csv" hidden></label>
+            <button type="button" class="btn btn--secondary" id="admin-export-csv">📊 Exportar tabela geral CSV</button>
+            <button type="button" class="btn btn--secondary" id="admin-cloud-backup">☁️ Enviar backup para a nuvem</button>
+            <button type="button" class="btn btn--danger" id="admin-clear-results">⚠️ Limpar resultados</button>
+            <small id="admin-cloud-status" style="flex-basis:100%;opacity:.75;"></small>
+          </div>
+        </section>
+
+        <!-- FILTROS E BUSCA -->
+        <section class="admin-toolbar card">
+          <div>
+            <label for="admin-search">Pesquisar</label>
+            <input id="admin-search" type="search" placeholder="🔍 Digite nome, turma ou categoria...">
+          </div>
+          <div>
+            <label for="admin-sport">Modalidade</label>
+            <select id="admin-sport">
+              <option value="todos">Todas modalidades</option>
+              <option>Basquete</option>
+              <option>Futsal</option>
+              <option>Vôlei</option>
+            </select>
+          </div>
+          <div>
+            <label for="admin-status">Status</label>
+            <select id="admin-status">
+              <option value="todos">Todos status</option>
+              <option value="nao_participou">Não participou</option>
+              <option value="em_andamento">Em andamento</option>
+              <option value="ja_participou">Já participou</option>
+              <option value="ausente">Ausente</option>
+              <option value="desclassificado">Desclassificado</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- TABELA OFICIAL DE ALUNOS -->
+        <div class="ranking__table-wrapper">
+          <table class="ranking__table admin-table">
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>Categoria</th>
+                <th>Modalidade</th>
+                <th>Status</th>
+                <th>Resultado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="admin-table-body"></tbody>
+          </table>
+          <div id="admin-empty" class="ranking__empty hidden">Nenhum aluno encontrado.</div>
+        </div>
+      </div>
+
+      <!-- ABA 2: CONFIGURAÇÃO DE CIRCUITOS (V4.16) -->
+      <section id="admin-view-circuitos" class="admin-circuit-view hidden">
+        <div class="circuit-editor-header">
+          <div>
+            <span class="eyebrow">Personalização de Regras</span>
+            <h3>Configuração Dinâmica das Modalidades</h3>
+            <p>Ajuste as estações, quantidades de tentativas e defina se cada habilidade é um Bônus (-X s) ou Penalidade (+X s).</p>
+          </div>
+          <div class="circuit-editor-actions">
+            <button type="button" class="btn btn--secondary" id="circuit-btn-reset">↺ Restaurar Padrão Oficial</button>
+            <button type="button" class="btn btn--primary" id="circuit-btn-save">💾 Salvar Circuito</button>
+          </div>
+        </div>
+
+        <div class="circuit-sport-selector" id="circuit-sport-selector">
+          <button type="button" class="circuit-sport-btn active" data-sport="Basquete">🏀 Basquete</button>
+          <button type="button" class="circuit-sport-btn" data-sport="Futsal">⚽ Futsal</button>
+          <button type="button" class="circuit-sport-btn" data-sport="Vôlei">🏐 Vôlei</button>
+        </div>
+
+        <div class="circuit-editor-meta" id="circuit-editor-meta"></div>
+
+        <div class="circuit-stations-list" id="circuit-stations-list"></div>
+
+        <div class="circuit-editor-footer">
+          <button type="button" class="btn btn--secondary" id="circuit-btn-add">＋ Adicionar Nova Estação</button>
+        </div>
+      </section>
+
+    </div>
+  </section>
+</main>
+
+<!-- MODAL DE CADASTRO / EDIÇÃO DE ALUNO -->
+<div class="modal-overlay" id="admin-modal">
+  <div class="modal">
+    <button class="modal__close" id="admin-modal-close" aria-label="Fechar">✕</button>
+    <h2 class="modal__title" id="admin-modal-title">Cadastrar aluno</h2>
+    <form class="modal__form" id="admin-form">
+      <input type="hidden" id="admin-edit-id">
+      <div class="form-group">
+        <label for="admin-nome">Nome completo</label>
+        <input id="admin-nome" required>
+      </div>
+      <div class="form-group">
+        <label for="admin-turma">Turma</label>
+        <input id="admin-turma" required>
+      </div>
+      <div class="form-group">
+        <label for="admin-categoria">Categoria</label>
+        <select id="admin-categoria" required>
+          <option value="">Selecione...</option>
+          <option>Feminino Fundamental</option>
+          <option>Masculino Fundamental</option>
+          <option>Feminino Médio</option>
+          <option>Masculino Médio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="admin-modalidade">Modalidade</label>
+        <select id="admin-modalidade" required>
+          <option value="">Selecione...</option>
+          <option>Basquete</option>
+          <option>Futsal</option>
+          <option>Vôlei</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="admin-status-edit">Status</label>
+        <select id="admin-status-edit" required>
+          <option value="nao_participou">Não participou</option>
+          <option value="em_andamento">Em andamento</option>
+          <option value="ja_participou">Já participou</option>
+          <option value="ausente">Ausente</option>
+          <option value="desclassificado">Desclassificado</option>
+        </select>
+      </div>
+      <button class="btn modal__submit" type="submit">Salvar dados</button>
+    </form>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>POLIEDROSKILLS — COLÉGIO POLIEDRO</p>
+    <p>Circuito Oficial de Habilidades Esportivas</p>
+  </div>
+</footer>
+<script src="supabase-config.js?v=4.20"></script>
+<script src="auth.js?v=4.20"></script>
+<script src="app.js?v=4.20"></script>
+</body>
+</html>
