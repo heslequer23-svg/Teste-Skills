@@ -384,6 +384,31 @@ document.addEventListener('DOMContentLoaded', () => {
     host.innerHTML = list.slice(0, 3).map((a, i) => `<article class="ranking-podium-card ranking-podium-card--${i + 1}"><span class="ranking-podium-card__medal">${medals[i]}</span><h3>${escapeHTML(a.nome)}</h3><p>${escapeHTML(a.turma)} • ${escapeHTML(a.categoria)}</p><strong>${formatSeconds(a.tempoFinal)}</strong><small>${escapeHTML(a.modalidade)}</small></article>`).join('') || '<div class="ranking__empty">Aguardando resultados oficiais.</div>';
   }
 
+  function renderRankingFilters() {
+    const filterContainer = $('filter-modalidade');
+    if (!filterContainer) return;
+    const sportsList = Object.keys(CIRCUITOS || {});
+
+    // Salva o filtro atual
+    const activeFilter = currentFilters.modalidade === 'Todas' ? 'todas' : currentFilters.modalidade;
+
+    let html = `<button type="button" class="filter-btn ${activeFilter === 'todas' ? 'active' : ''}" data-filter="todas">Todas</button>`;
+    sportsList.forEach(sport => {
+      const emoji = MODALIDADES_EMOJIS[sport] || '⚡';
+      const isActive = activeFilter === sport;
+      html += `<button type="button" class="filter-btn ${isActive ? 'active' : ''}" data-filter="${escapeHTML(sport)}">${emoji} ${escapeHTML(sport)}</button>`;
+    });
+
+    filterContainer.innerHTML = html;
+
+    filterContainer.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
+      filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilters.modalidade = btn.dataset.filter === 'todas' ? 'Todas' : btn.dataset.filter;
+      renderRanking();
+    }));
+  }
+
   function renderRanking() {
     if (!rankingTableBody) return;
     let list = currentAtletas.filter(a => a.statusParticipacao === 'ja_participou' && a.tempoFinal !== null && Number.isFinite(Number(a.tempoFinal)));
@@ -783,24 +808,47 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshAll();
   });
 
-  function renderCircuitosPage() {
-    const sportMap = {
-      Basquete: 'circuito-basquete',
-      Futsal: 'circuito-futsal',
-      'Vôlei': 'circuito-volei'
-    };
+  let activeCircuitoTabSport = 'Basquete';
 
+  function renderCircuitosPage() {
+    const tabsContainer = $('circuitos-tabs-container') || document.querySelector('.circuitos__tabs');
+    const contentsContainer = $('circuitos-contents-container') || $('circuito-basquete')?.parentElement;
+    if (!tabsContainer || !contentsContainer) return;
+
+    const sportsList = Object.keys(CIRCUITOS || {});
+    if (!sportsList.length) return;
+
+    if (!sportsList.includes(activeCircuitoTabSport)) {
+      activeCircuitoTabSport = sportsList[0];
+    }
+
+    // 1. Renderiza as abas dinamicamente
+    tabsContainer.innerHTML = sportsList.map(sportName => {
+      const emoji = MODALIDADES_EMOJIS[sportName] || '⚡';
+      const isActive = sportName === activeCircuitoTabSport;
+      return `<button type="button" class="circuito-tab ${isActive ? 'active' : ''}" data-sport="${escapeHTML(sportName)}">${emoji} ${escapeHTML(sportName)}</button>`;
+    }).join('');
+
+    // Listener para troca de abas
+    tabsContainer.querySelectorAll('.circuito-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        activeCircuitoTabSport = tab.dataset.sport;
+        renderCircuitosPage();
+      });
+    });
+
+    // 2. Renderiza os conteúdos de cada modalidade
     let totalStations = 0;
     let sportsCount = 0;
 
-    Object.entries(sportMap).forEach(([sportName, containerId]) => {
-      const container = document.querySelector(`#${containerId} .circuito__stations`);
-      if (!container) return;
+    contentsContainer.innerHTML = sportsList.map(sportName => {
       const stations = CIRCUITOS[sportName] || [];
+      const emoji = MODALIDADES_EMOJIS[sportName] || '⚡';
+      const isActive = sportName === activeCircuitoTabSport;
       sportsCount++;
       totalStations += stations.length;
 
-      container.innerHTML = stations.map((item, idx) => {
+      const stationsHTML = stations.map((item, idx) => {
         const isPenalty = item.type === 'penalty' || item.impact === 'penalty';
         const unit = Number(item.unit || item.bonus || 2);
         const hasAttempts = Boolean(item.attempts && item.type !== 'standard');
@@ -825,17 +873,32 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `;
       }).join('');
-    });
+
+      return `
+        <div class="circuito-content ${isActive ? 'active' : ''}" id="circuito-${escapeHTML(sportName.toLowerCase().replace(/\s+/g, '-'))}">
+          <div class="circuito__header">
+            <div>
+              <h3>${emoji} ${escapeHTML(sportName.toUpperCase())}</h3>
+              <p>Circuito Oficial de Fundamentos e Habilidades Técnicas</p>
+            </div>
+            <div class="circuito__time">
+              <span style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;">Tempo médio</span><br/>
+              <strong>40s - 80s</strong>
+            </div>
+          </div>
+          <div class="circuito__stations circuito__stations--timeline">
+            ${stationsHTML || '<div class="ranking__empty">Nenhuma estação configurada para este circuito.</div>'}
+          </div>
+        </div>
+      `;
+    }).join('');
 
     const avgStations = sportsCount > 0 ? Math.round(totalStations / sportsCount) : 4;
     const countEl = $('circuit-overview-count') || document.querySelector('.circuits-overview article:nth-child(2) span');
     if (countEl) countEl.textContent = avgStations;
+    const sportsCountEl = document.querySelector('.circuits-overview article:nth-child(1) span');
+    if (sportsCountEl) sportsCountEl.textContent = sportsCount;
   }
-
-  document.querySelectorAll('.circuito-tab').forEach(tab => tab.addEventListener('click', () => {
-    document.querySelectorAll('.circuito-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.circuito-content').forEach(c => c.classList.remove('active'));
-    tab.classList.add('active'); $(`circuito-${tab.dataset.sport}`)?.classList.add('active');
-  }));
 
   renderCircuitosPage();
 
@@ -1101,6 +1164,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function refreshAll() {
     currentAtletas = getAtletas();
     updateAllSportSelects();
+    renderRankingFilters();
+    renderCircuitosPage();
     const q = $('painel-search-atleta')?.value || '';
     const sport = $('painel-sport-filter')?.value || 'todas';
     populateAtletaSelect(q, sport);
@@ -1113,9 +1178,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function syncCircuitosUpdate(newCircuits) {
     CIRCUITOS = newCircuits || loadCircuitos();
+    MODALIDADES_EMOJIS = loadModalidadesEmojis();
+    updateAllSportSelects();
+    renderRankingFilters();
     const currentMod = atletaSelect?.selectedOptions?.[0]?.dataset?.modalidade;
     if (currentMod) updateEstacoesGrid(currentMod);
     renderCircuitosPage();
+    renderRanking();
   }
 
   window.addEventListener('storage', e => {
@@ -1393,40 +1462,40 @@ document.addEventListener('DOMContentLoaded', () => {
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   @page { size: A4 landscape; margin: 0; }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  html, body { width: 297mm; height: 210mm; background: #fff; font-family: 'Inter', Arial, sans-serif; color: #02142f; }
-  .sheet { width: 297mm; height: 210mm; padding: 10mm; display: flex; align-items: center; justify-content: center;
-           background: linear-gradient(135deg, #02142f 0%, #0a2a5c 100%); }
-  .frame { position: relative; width: 277mm; height: 190mm; background: #fff; border: 1.2mm solid #ff7a00;
-           outline: .4mm solid #fff; outline-offset: -3mm; padding: 12mm 18mm 10mm; display: flex; flex-direction: column; }
-  .frame::before { content: ''; position: absolute; inset: 3.4mm; border: .35mm solid #02142f; pointer-events: none; }
-  .corner { position: absolute; width: 16mm; height: 16mm; border-color: #ff7a00; border-style: solid; }
-  .c-tl { top: 6mm; left: 6mm; border-width: 1.2mm 0 0 1.2mm; } .c-tr { top: 6mm; right: 6mm; border-width: 1.2mm 1.2mm 0 0; }
-  .c-bl { bottom: 6mm; left: 6mm; border-width: 0 0 1.2mm 1.2mm; } .c-br { bottom: 6mm; right: 6mm; border-width: 0 1.2mm 1.2mm 0; }
-  .watermark { position: absolute; right: 14mm; top: 50%; transform: translateY(-50%); font: 800 120mm/1 'Plus Jakarta Sans', sans-serif; color: rgba(2,20,47,.035); pointer-events: none; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { width: 297mm; height: 210mm; max-height: 210mm; background: #fff; font-family: 'Inter', Arial, sans-serif; color: #02142f; overflow: hidden; }
+  .sheet { width: 297mm; height: 210mm; max-height: 210mm; padding: 8mm 10mm; display: flex; align-items: center; justify-content: center;
+           background: linear-gradient(135deg, #02142f 0%, #0a2a5c 100%); overflow: hidden; page-break-after: avoid; page-break-inside: avoid; }
+  .frame { position: relative; width: 277mm; height: 194mm; max-height: 194mm; background: #fff; border: 1.2mm solid #ff7a00;
+           outline: .4mm solid #fff; outline-offset: -3mm; padding: 8mm 16mm 7mm; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+  .frame::before { content: ''; position: absolute; inset: 2.8mm; border: .35mm solid #02142f; pointer-events: none; }
+  .corner { position: absolute; width: 14mm; height: 14mm; border-color: #ff7a00; border-style: solid; }
+  .c-tl { top: 5mm; left: 5mm; border-width: 1.2mm 0 0 1.2mm; } .c-tr { top: 5mm; right: 5mm; border-width: 1.2mm 1.2mm 0 0; }
+  .c-bl { bottom: 5mm; left: 5mm; border-width: 0 0 1.2mm 1.2mm; } .c-br { bottom: 5mm; right: 5mm; border-width: 0 1.2mm 1.2mm 0; }
+  .watermark { position: absolute; right: 12mm; top: 50%; transform: translateY(-50%); font: 800 110mm/1 'Plus Jakarta Sans', sans-serif; color: rgba(2,20,47,.03); pointer-events: none; }
   header { text-align: center; }
-  .brand { font: 800 9mm/1 'Plus Jakarta Sans', sans-serif; letter-spacing: .6mm; color: #02142f; }
+  .brand { font: 800 8.5mm/1 'Plus Jakarta Sans', sans-serif; letter-spacing: .6mm; color: #02142f; }
   .brand span { color: #ff7a00; }
-  .kicker { margin-top: 2.5mm; font: 600 3.4mm/1.2 'Inter', sans-serif; letter-spacing: 1.2mm; text-transform: uppercase; color: #ff7a00; }
-  .rule { width: 60mm; height: .8mm; background: #ff7a00; margin: 4mm auto 0; border-radius: 1mm; }
-  .intro { margin-top: 7mm; text-align: center; font-size: 4mm; color: #3b4a63; }
-  .name { margin-top: 3mm; text-align: center; font: 800 12mm/1.1 'Plus Jakarta Sans', sans-serif; color: #02142f; }
-  .desc { margin: 4mm auto 0; max-width: 210mm; text-align: center; font-size: 3.9mm; line-height: 1.55; color: #3b4a63; }
+  .kicker { margin-top: 1.8mm; font: 600 3mm/1.2 'Inter', sans-serif; letter-spacing: 1.1mm; text-transform: uppercase; color: #ff7a00; }
+  .rule { width: 50mm; height: .7mm; background: #ff7a00; margin: 2.5mm auto 0; border-radius: 1mm; }
+  .intro { margin-top: 3.5mm; text-align: center; font-size: 3.6mm; color: #3b4a63; }
+  .name { margin-top: 1.8mm; text-align: center; font: 800 9.5mm/1.1 'Plus Jakarta Sans', sans-serif; color: #02142f; }
+  .desc { margin: 2.5mm auto 0; max-width: 215mm; text-align: center; font-size: 3.6mm; line-height: 1.45; color: #3b4a63; }
   .desc strong { color: #02142f; }
-  .stats { margin: 7mm auto 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; width: 220mm; }
-  .stat { border: .35mm solid #d6dce6; border-top: 1.2mm solid #02142f; border-radius: 2mm; padding: 3.5mm 3mm; text-align: center; background: #f6f8fb; }
+  .stats { margin: 4mm auto 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; width: 225mm; }
+  .stat { border: .35mm solid #d6dce6; border-top: 1.1mm solid #02142f; border-radius: 2mm; padding: 2.5mm 2mm; text-align: center; background: #f6f8fb; }
   .stat--main { border-top-color: #ff7a00; background: #fff6ee; }
-  .stat small { display: block; font: 600 2.7mm/1.2 'Inter', sans-serif; letter-spacing: .4mm; text-transform: uppercase; color: #5b6b84; }
-  .stat b { display: block; margin-top: 1.8mm; font: 700 7mm/1 'JetBrains Mono', monospace; color: #02142f; }
+  .stat small { display: block; font: 600 2.4mm/1.1 'Inter', sans-serif; letter-spacing: .3mm; text-transform: uppercase; color: #5b6b84; }
+  .stat b { display: block; margin-top: 1.2mm; font: 700 6mm/1 'JetBrains Mono', monospace; color: #02142f; }
   .stat--main b { color: #ff7a00; }
-  .stat em { display: block; margin-top: 1.2mm; font-style: normal; font-size: 2.8mm; color: #5b6b84; }
-  footer { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 10mm; }
+  .stat em { display: block; margin-top: 1mm; font-style: normal; font-size: 2.5mm; color: #5b6b84; }
+  footer { margin-top: 3.5mm; display: flex; align-items: flex-end; justify-content: space-between; gap: 8mm; }
   .sign { width: 95mm; text-align: center; }
-  .sign .line { border-top: .35mm solid #02142f; margin-bottom: 2mm; }
-  .sign b { display: block; font-size: 3.4mm; color: #02142f; } .sign span { font-size: 3mm; color: #5b6b84; }
-  .meta { font-size: 2.8mm; color: #5b6b84; line-height: 1.6; } .meta--right { text-align: right; }
+  .sign .line { border-top: .35mm solid #02142f; margin-bottom: 1.8mm; }
+  .sign b { display: block; font-size: 3.2mm; color: #02142f; } .sign span { font-size: 2.8mm; color: #5b6b84; }
+  .meta { font-size: 2.6mm; color: #5b6b84; line-height: 1.5; } .meta--right { text-align: right; }
   .meta code { font-family: 'JetBrains Mono', monospace; color: #02142f; }
-  @media screen { body { background: #4b5563; } html, body { width: auto; height: auto; } .sheet { margin: 10mm auto; box-shadow: 0 10px 40px rgba(0,0,0,.4); } }
+  @media screen { body { background: #4b5563; } html, body { width: auto; height: auto; overflow: auto; } .sheet { margin: 10mm auto; box-shadow: 0 10px 40px rgba(0,0,0,.4); } }
 </style></head>
 <body><main class="sheet"><section class="frame">
   <i class="corner c-tl"></i><i class="corner c-tr"></i><i class="corner c-bl"></i><i class="corner c-br"></i>

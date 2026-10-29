@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
@@ -32,151 +32,11 @@
   <article><span>Ao vivo</span><small>validação do resultado</small></article>
 </div>
 <div class="circuit-rule-callout"><span>⏱️</span><div><strong>Como o resultado é calculado</strong><p>Tempo final = tempo cronometrado + penalidades − bônus. Quanto menor o resultado, melhor a posição no ranking.</p></div></div>
-<div class="circuitos__tabs">
-<button class="circuito-tab active" data-sport="basquete">🏀 Basquete</button>
-<button class="circuito-tab" data-sport="futsal">⚽ Futsal</button>
-<button class="circuito-tab" data-sport="volei">🏐 Vôlei</button>
+<div class="circuitos__tabs" id="circuitos-tabs-container">
+<!-- Abas e conteúdos gerados dinamicamente via app.js -->
 </div>
-<!-- BASQUETE -->
-<div class="circuito-content active" id="circuito-basquete">
-<div class="circuito__header">
-<div>
-<h3>🏀 BASQUETE</h3>
-<p>Circuito de Drible e Arremesso</p>
-</div>
-<div class="circuito__time">
-<span style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;">Tempo médio</span><br/>
-<strong>45s - 75s</strong>
-</div>
-</div>
-<div class="circuito__stations circuito__stations--timeline">
-<div class="station-card">
-<div class="station-card__number">1</div>
-<div>
-<div class="station-card__title">Início &amp; Drible</div>
-<p class="station-card__desc">Arrancada inicial e drible de agilidade entre 5 cones dispostos em ziguezague.</p>
-<span class="station-card__bonus">-2s por drible limpo</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">2</div>
-<div>
-<div class="station-card__title">Mudança de Mão</div>
-<p class="station-card__desc">Execução de crossover (troca de mão) nos pontos demarcados do garrafão.</p>
-<span class="station-card__bonus">-2s por controle</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">3</div>
-<div>
-<div class="station-card__title">Passe de Precisão (5 Lançamentos)</div>
-<p class="station-card__desc">Série de 5 passes diretos no alvo fixado. Cada passe convertido garante -2s de bônus adicional.</p>
-<span class="station-card__bonus">-2s por passe (Até -10s total)</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">4</div>
-<div>
-<div class="station-card__title">Arremesso</div>
-<p class="station-card__desc">Série de até 8 arremessos nas posições demarcadas, com bônus por cesta convertida.</p>
-<span class="station-card__bonus">-2s por arremesso convertido</span>
-</div>
-</div>
-</div>
-</div>
-<!-- FUTSAL -->
-<div class="circuito-content" id="circuito-futsal">
-<div class="circuito__header">
-<div>
-<h3>⚽ FUTSAL</h3>
-<p>Circuito de Condução e Chute de Precisão</p>
-</div>
-<div class="circuito__time">
-<span style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;">Tempo médio</span><br/>
-<strong>50s - 80s</strong>
-</div>
-</div>
-<div class="circuito__stations circuito__stations--timeline">
-<div class="station-card">
-<div class="station-card__number">1</div>
-<div>
-<div class="station-card__title">Condução</div>
-<p class="station-card__desc">Condução rápida de bola rente aos pés contornando estacas em velocidade.</p>
-<span class="station-card__bonus">-2s sem perder controle</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">2</div>
-<div>
-<div class="station-card__title">Mudança de Direção</div>
-<p class="station-card__desc">Corte rápido em 90 graus simulando drible sobre o marcador estático.</p>
-<span class="station-card__bonus">-2s mudança fluida</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">3</div>
-<div>
-<div class="station-card__title">Domínio &amp; Passe</div>
-<p class="station-card__desc">Recepção de bola rebatedora e passe com parte interna do pé no alvo curto.</p>
-<span class="station-card__bonus">-2s passe preciso</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">4</div>
-<div>
-<div class="station-card__title">Finalização</div>
-<p class="station-card__desc">Chute de precisão com bola em movimento visando as traves superiores do mini gol.</p>
-<span class="station-card__bonus">-2s gol ou gaveta</span>
-</div>
-</div>
-</div>
-</div>
-<!-- VÔLEI -->
-<div class="circuito-content" id="circuito-volei">
-<div class="circuito__header">
-<div>
-<h3>🏐 VÔLEI</h3>
-<p>Circuito de Fundamentos e Ataque</p>
-</div>
-<div class="circuito__time">
-<span style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;">Tempo médio</span><br/>
-<strong>40s - 70s</strong>
-</div>
-</div>
-<div class="circuito__stations circuito__stations--timeline">
-<div class="station-card">
-<div class="station-card__number">1</div>
-<div>
-<div class="station-card__title">Deslocamento</div>
-<p class="station-card__desc">Deslocamento lateral ágil tocando as linhas delimitadoras da quadra.</p>
-<span class="station-card__bonus">-2s toque na linha</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">2</div>
-<div>
-<div class="station-card__title">Toque de Precisão</div>
-<p class="station-card__desc">Toque alto com as pontas dos dedos direcionado para dentro de um cesto/arco.</p>
-<span class="station-card__bonus">-2s entrada no cesto</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">3</div>
-<div>
-<div class="station-card__title">Manchete</div>
-<p class="station-card__desc">Recepção de manchete postura correta direcionando à zona demarcada.</p>
-<span class="station-card__bonus">-2s alinhamento perfeito</span>
-</div>
-</div>
-<div class="station-card">
-<div class="station-card__number">4</div>
-<div>
-<div class="station-card__title">Saque e Ataque</div>
-<p class="station-card__desc">Saque por cima + salto com ataque direcionado ao alvo quadra adversária.</p>
-<span class="station-card__bonus">-2s acerto no alvo</span>
-</div>
-</div>
-</div>
+<div id="circuitos-contents-container">
+<!-- Conteúdos dos circuitos gerados dinamicamente via app.js -->
 </div>
 </div>
 </section></main>
